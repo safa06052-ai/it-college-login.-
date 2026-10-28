@@ -5,505 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#090d20">
 <title>واجهتك الأولى | كلية تقنية المعلومات</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
 <style>
-:root {
-  --bg:#080b19;
-  --panel:rgba(17,22,46,.82);
-  --purple:#9367ff;
-  --cyan:#52efff;
-  --pink:#e879f9;
-  --white:#f5f5ff;
-  --muted:#939bb9;
-}
-* {box-sizing:border-box;margin:0;padding:0}
-body {
-  min-height:100vh;
-  min-height:100svh;
-  padding:28px 18px;
-  display:grid;
-  place-items:center;
-  position:relative;
-  isolation:isolate;
-  overflow-x:hidden;
-  background:
-    radial-gradient(ellipse at 50% 45%,#191538 0%,transparent 52%),
-    linear-gradient(140deg,#0c1025,#080b19 60%,#101027);
-  color:var(--white);
-  font-family:'Cairo',Tahoma,sans-serif;
-}
-body::before {
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-3;
-  pointer-events:none;
-  background-image:
-    linear-gradient(rgba(122,113,255,.055) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(122,113,255,.055) 1px,transparent 1px);
-  background-size:42px 42px;
-  mask-image:radial-gradient(ellipse at center,black,transparent 85%);
-}
-.ambient {
-  position:fixed;
-  width:330px;height:330px;
-  border-radius:50%;
-  filter:blur(100px);
-  opacity:.23;
-  pointer-events:none;
-  z-index:-2;
-  animation:float 9s ease-in-out infinite alternate;
-}
-.a {top:-120px;right:-100px;background:#693cff}
-.b {bottom:-150px;left:-100px;background:#00d9ff;animation-delay:-4s}
-.c {top:40%;left:35%;width:190px;height:190px;background:#d946ef;opacity:.1}
-.stars {
-  position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background-image:
-    radial-gradient(circle,#fff 1px,transparent 1.5px),
-    radial-gradient(circle,#6defff 1px,transparent 1.5px),
-    radial-gradient(circle,#bca8ff 1px,transparent 1.5px);
-  background-size:107px 107px,173px 173px,137px 137px;
-  background-position:0 0,45px 70px,25px 20px;
-  opacity:.28;
-}
-.page {width:100%;max-width:425px;margin:auto;animation:reveal .9s ease both}
-.brand {text-align:center;margin-bottom:27px}
-.brand-symbol {
-  width:60px;height:60px;margin:0 auto 17px;
-  display:grid;place-items:center;
-  border:1px solid rgba(82,239,255,.4);
-  border-radius:19px;
-  background:linear-gradient(145deg,rgba(82,239,255,.13),rgba(147,103,255,.14));
-  box-shadow:0 0 25px rgba(82,239,255,.1),inset 0 0 20px rgba(147,103,255,.08);
-  color:var(--cyan);font-size:29px;
-}
-.eyebrow {
-  font-size:13px;font-weight:700;letter-spacing:3px;
-  color:var(--cyan);direction:ltr;margin-bottom:8px;
-}
-h1 {font-size:clamp(29px,8vw,38px);line-height:1.65;font-weight:900}
-h1 span {
-  display:block;font-size:.69em;font-weight:600;
-  background:linear-gradient(90deg,var(--cyan),#c1a5ff,var(--pink));
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-}
-.brand-description {color:var(--muted);font-size:15px;margin-top:10px}
-.card {
-  position:relative;overflow:hidden;
-  padding:31px 27px 25px;
-  border:1px solid rgba(158,151,255,.23);
-  border-radius:26px;background:var(--panel);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  box-shadow:0 25px 90px rgba(0,0,0,.38),0 0 40px rgba(111,77,255,.08),inset 0 1px 0 rgba(255,255,255,.07);
-}
-.card::before {
-  content:"";position:absolute;height:2px;width:70%;top:0;right:15%;
-  background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent);
-  box-shadow:0 0 16px var(--cyan);
-}
-.card-top {text-align:center;margin-bottom:27px}
-.welcome {
-  display:inline-block;padding:5px 12px;margin-bottom:12px;
-  border:1px solid rgba(82,239,255,.2);border-radius:30px;
-  background:rgba(82,239,255,.055);color:var(--cyan);font-size:13px;
-}
-.card-top h2 {font-size:28px;font-weight:800}
-.card-top p {color:var(--muted);font-size:14px;margin-top:6px}
-.field {margin-bottom:19px}
-.field label {display:block;font-size:15px;color:#dce0f6;margin-bottom:9px;font-weight:600}
-.input-wrap {
-  height:56px;display:flex;align-items:center;gap:11px;padding:0 14px;
-  border-radius:13px;border:1px solid #303553;
-  background:rgba(7,10,26,.58);
-  transition:border-color .25s,box-shadow .25s,background .25s;
-}
-.input-wrap:focus-within {
-  border-color:var(--cyan);background:rgba(12,19,41,.9);
-  box-shadow:0 0 0 3px rgba(82,239,255,.075),0 0 20px rgba(82,239,255,.07);
-}
-.field-icon {color:var(--purple);font-size:19px;flex-shrink:0}
-.input-wrap:focus-within .field-icon {color:var(--cyan)}
-.input-wrap input {
-  width:100%;min-width:0;outline:none;border:none;
-  background:transparent;color:var(--white);
-  font-family:inherit;font-size:15px;
-}
-input::placeholder {color:#737d9d}
-.toggle {
-  border:0;background:none;color:var(--cyan);
-  font-family:inherit;font-size:13px;cursor:pointer;flex-shrink:0;
-}
-.preferences {
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:10px;margin:2px 0 24px;
-}
-.remember {display:flex;align-items:center;gap:7px;color:#aeb5d0;font-size:13px;cursor:pointer}
-.remember input {accent-color:var(--purple)}
-a {color:var(--cyan);font-size:13px;text-decoration:none}
-a:hover {color:var(--pink)}
-.login-btn {
-  position:relative;width:100%;min-height:53px;overflow:hidden;
-  border:0;border-radius:13px;color:#0b1024;
-  background:linear-gradient(105deg,#59eaff,#9f8aff 60%,#d6a4ff);
-  font-family:inherit;font-size:17px;font-weight:900;cursor:pointer;
-  box-shadow:0 7px 25px rgba(114,125,255,.19);
-  transition:transform .2s,box-shadow .2s;
-}
-.login-btn:hover {transform:translateY(-2px);box-shadow:0 10px 32px rgba(82,239,255,.2)}
-.login-btn:active {transform:scale(.98)}
-.login-btn:disabled {opacity:.65;cursor:wait;transform:none}
-.secondary-btn {
-  display:block;width:100%;margin-top:12px;padding:11px;
-  border:1px solid rgba(147,103,255,.45);border-radius:12px;
-  background:rgba(147,103,255,.08);color:#d1c4ff;
-  font-family:inherit;font-size:14px;cursor:pointer;
-}
-.secondary-btn:hover {background:rgba(147,103,255,.17)}
-.message {
-  display:none;margin-top:17px;padding:12px;
-  border:1px solid rgba(82,239,255,.22);border-radius:12px;
-  color:var(--cyan);background:rgba(82,239,255,.05);
-  text-align:center;font-size:13px;line-height:1.9;overflow-wrap:anywhere;
-}
-.divider {height:1px;margin:24px 0 17px;background:linear-gradient(90deg,transparent,#353853,transparent)}
-.bottom {text-align:center;color:#7f89a9;font-size:13px;line-height:2}
-.bottom strong {
-  display:block;color:#b9a7ff;font-size:13px;
-  letter-spacing:3px;direction:ltr;font-weight:600;
-}
-footer {text-align:center;margin-top:22px;color:#727c9a;font-size:13px}
-footer span {color:var(--cyan)}
-[hidden] {display:none!important}
-@keyframes float {
-  from {transform:translate(0,0) scale(1)}
-  to {transform:translate(-30px,25px) scale(1.12)}
-}
-@keyframes reveal {
-  from {opacity:0;transform:translateY(20px)}
-  to {opacity:1;transform:translateY(0)}
-}
-@media(max-width:380px) {
-  body {padding:22px 13px}
-  .card {padding:26px 19px 22px}
-  .brand {margin-bottom:22px}
-  .brand-symbol {width:53px;height:53px}
-}
-@media(prefers-reduced-motion:reduce) {
-  *,*::before,*::after {animation:none!important;transition:none!important}
-}
+:root{--bg:#080b19;--panel:rgba(17,22,46,.82);--purple:#9367ff;--cyan:#52efff;--pink:#e879f9;--white:#f5f5ff;--muted:#939bb9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;min-height:100svh;padding:28px 18px;display:grid;place-items:center;position:relative;isolation:isolate;overflow-x:hidden;background:radial-gradient(ellipse at 50% 45%,#191538 0%,transparent 52%),linear-gradient(140deg,#0c1025,#080b19 60%,#101027);color:var(--white);font-family:'Cairo',Tahoma,sans-serif}
+body::before{content:"";position:fixed;inset:0;z-index:-3;pointer-events:none;background-image:linear-gradient(rgba(122,113,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(122,113,255,.055) 1px,transparent 1px);background-size:42px 42px;mask-image:radial-gradient(ellipse at center,black,transparent 85%)}
+.ambient{position:fixed;width:330px;height:330px;border-radius:50%;filter:blur(100px);opacity:.23;pointer-events:none;z-index:-2;animation:float 9s ease-in-out infinite alternate}
+.a{top:-120px;right:-100px;background:#693cff}.b{bottom:-150px;left:-100px;background:#00d9ff;animation-delay:-4s}.c{top:40%;left:35%;width:190px;height:190px;background:#d946ef;opacity:.1}
+.stars{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(circle,#fff 1px,transparent 1.5px),radial-gradient(circle,#6defff 1px,transparent 1.5px),radial-gradient(circle,#bca8ff 1px,transparent 1.5px);background-size:107px 107px,173px 173px,137px 137px;background-position:0 0,45px 70px,25px 20px;opacity:.28}
+.page{width:100%;max-width:425px;margin:auto;animation:reveal .9s ease both}.brand{text-align:center;margin-bottom:27px}
+.brand-symbol{width:60px;height:60px;margin:0 auto 17px;display:grid;place-items:center;border:1px solid rgba(82,239,255,.4);border-radius:19px;background:linear-gradient(145deg,rgba(82,239,255,.13),rgba(147,103,255,.14));box-shadow:0 0 25px rgba(82,239,255,.1),inset 0 0 20px rgba(147,103,255,.08);color:var(--cyan);font-size:29px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--cyan);direction:ltr;margin-bottom:8px}
+h1{font-size:clamp(29px,8vw,38px);line-height:1.65;font-weight:900}h1 span{display:block;font-size:.69em;font-weight:600;background:linear-gradient(90deg,var(--cyan),#c1a5ff,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-description{color:var(--muted);font-size:15px;margin-top:10px}
+.card{position:relative;overflow:hidden;padding:31px 27px 25px;border:1px solid rgba(158,151,255,.23);border-radius:26px;background:var(--panel);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 25px 90px rgba(0,0,0,.38),0 0 40px rgba(111,77,255,.08),inset 0 1px 0 rgba(255,255,255,.07)}
+.card::before{content:"";position:absolute;height:2px;width:70%;top:0;right:15%;background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent);box-shadow:0 0 16px var(--cyan)}
+.card-top{text-align:center;margin-bottom:27px}.welcome{display:inline-block;padding:5px 12px;margin-bottom:12px;border:1px solid rgba(82,239,255,.2);border-radius:30px;background:rgba(82,239,255,.055);color:var(--cyan);font-size:13px}
+.card-top h2{font-size:28px;font-weight:800}.card-top p{color:var(--muted);font-size:14px;margin-top:6px}.field{margin-bottom:19px}.field label{display:block;font-size:15px;color:#dce0f6;margin-bottom:9px;font-weight:600}
+.input-wrap{height:56px;display:flex;align-items:center;gap:11px;padding:0 14px;border-radius:13px;border:1px solid #303553;background:rgba(7,10,26,.58);transition:border-color .25s,box-shadow .25s,background .25s}
+.input-wrap:focus-within{border-color:var(--cyan);background:rgba(12,19,41,.9);box-shadow:0 0 0 3px rgba(82,239,255,.075),0 0 20px rgba(82,239,255,.07)}
+.field-icon{color:var(--purple);font-size:19px;flex-shrink:0}.input-wrap:focus-within .field-icon{color:var(--cyan)}
+.input-wrap input{width:100%;min-width:0;outline:none;border:none;background:transparent;color:var(--white);font-family:inherit;font-size:15px}input::placeholder{color:#737d9d}
+.toggle{border:0;background:none;color:var(--cyan);font-family:inherit;font-size:13px;cursor:pointer;flex-shrink:0}
+.preferences{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:2px 0 24px}.remember{display:flex;align-items:center;gap:7px;color:#aeb5d0;font-size:13px;cursor:pointer}.remember input{accent-color:var(--purple)}
+a{color:var(--cyan);font-size:13px;text-decoration:none}a:hover{color:var(--pink)}
+.login-btn{position:relative;width:100%;min-height:53px;overflow:hidden;border:0;border-radius:13px;color:#0b1024;background:linear-gradient(105deg,#59eaff,#9f8aff 60%,#d6a4ff);font-family:inherit;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 7px 25px rgba(114,125,255,.19);transition:transform .2s,box-shadow .2s}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(82,239,255,.2)}.login-btn:active{transform:scale(.98)}.login-btn:disabled{opacity:.65;cursor:wait;transform:none}
+.secondary-btn{display:block;width:100%;margin-top:12px;padding:11px;border:1px solid rgba(147,103,255,.45);border-radius:12px;background:rgba(147,103,255,.08);color:#d1c4ff;font-family:inherit;font-size:14px;cursor:pointer}.secondary-btn:hover{background:rgba(147,103,255,.17)}
+.message{display:none;margin-top:17px;padding:12px;border:1px solid rgba(82,239,255,.22);border-radius:12px;color:var(--cyan);background:rgba(82,239,255,.05);text-align:center;font-size:13px;line-height:1.9;overflow-wrap:anywhere}
+.divider{height:1px;margin:24px 0 17px;background:linear-gradient(90deg,transparent,#353853,transparent)}.bottom{text-align:center;color:#7f89a9;font-size:13px;line-height:2}.bottom strong{display:block;color:#b9a7ff;font-size:13px;letter-spacing:3px;direction:ltr;font-weight:600}
+footer{text-align:center;margin-top:22px;color:#727c9a;font-size:13px}footer span{color:var(--cyan)}[hidden]{display:none!important}
+@keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(-30px,25px) scale(1.12)}}@keyframes reveal{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:380px){body{padding:22px 13px}.card{padding:26px 19px 22px}.brand{margin-bottom:22px}.brand-symbol{width:53px;height:53px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
-
 <body>
-<div class="ambient a"></div>
-<div class="ambient b"></div>
-<div class="ambient c"></div>
-<div class="stars"></div>
-
+<div class="ambient a"></div><div class="ambient b"></div><div class="ambient c"></div><div class="stars"></div>
 <main class="page">
-  <header class="brand">
-    <div class="brand-symbol">⌘</div>
-    <div class="eyebrow">INFORMATION TECHNOLOGY</div>
-    <h1>واجهتك الأولى
-      <span>كلية تقنية المعلومات</span>
-    </h1>
-    <p class="brand-description">بداية رحلتك نحو عالم من الأفكار والإبداع.</p>
-  </header>
-
-  <section class="card">
-    <div class="card-top">
-      <span class="welcome">✦ &nbsp; البوابة الرقمية</span>
-      <h2 id="formTitle">أهلًا بك</h2>
-      <p id="formDescription">أدخل بيانات الحساب للمتابعة إلى النظام.</p>
-    </div>
-
-    <form id="authForm">
-      <div class="field">
-        <label for="email">البريد الإلكتروني</label>
-        <div class="input-wrap">
-          <span class="field-icon">♙</span>
-          <input id="email" name="email" type="email"
-            placeholder="أدخل بريدك الإلكتروني"
-            autocomplete="email" required>
-        </div>
-      </div>
-
-      <div class="field" id="passwordField">
-        <label for="password">كلمة المرور</label>
-        <div class="input-wrap">
-          <span class="field-icon">⌑</span>
-          <input id="password" name="password" type="password"
-            placeholder="أدخل كلمة المرور"
-            autocomplete="current-password" required minlength="6">
-          <button class="toggle" type="button" id="togglePassword">إظهار</button>
-        </div>
-      </div>
-
-      <div class="field" id="confirmField" hidden>
-        <label for="confirmPassword">تأكيد كلمة المرور</label>
-        <div class="input-wrap">
-          <span class="field-icon">⌑</span>
-          <input id="confirmPassword" type="password"
-            placeholder="أعد كتابة كلمة المرور"
-            autocomplete="new-password" minlength="6">
-        </div>
-      </div>
-
-      <div class="preferences" id="loginOptions">
-        <label class="remember">
-          <input type="checkbox" id="remember">
-          تذكّرني
-        </label>
-        <a href="#reset" id="forgot">نسيت كلمة المرور؟</a>
-      </div>
-
-      <button class="login-btn" id="submitButton" type="submit">
-        تسجيل الدخول &nbsp; ←
-      </button>
-
-      <button class="secondary-btn" id="switchMode" type="button">
-        إنشاء حساب جديد
-      </button>
-
-      <button class="secondary-btn" id="backToLogin" type="button" hidden>
-        العودة إلى تسجيل الدخول
-      </button>
-
-      <div class="message" id="message" role="status" aria-live="polite"></div>
-    </form>
-
-    <div class="divider"></div>
-    <div class="bottom">
-      كل فكرة عظيمة تبدأ بمحاولة.
-      <strong>CODE YOUR FUTURE</strong>
-    </div>
-  </section>
-
-  <footer>صُنعت بشغف &nbsp; <span>✦</span> &nbsp; عالم التقنية والإبداع</footer>
+<header class="brand"><div class="brand-symbol">⌘</div><div class="eyebrow">INFORMATION TECHNOLOGY</div><h1>واجهتك الأولى<span>كلية تقنية المعلومات</span></h1><p class="brand-description">بداية رحلتك نحو عالم من الأفكار والإبداع.</p></header>
+<section class="card">
+<div class="card-top"><span class="welcome">✦ &nbsp; البوابة الرقمية</span><h2 id="formTitle">أهلًا بك</h2><p id="formDescription">أدخل بيانات الحساب للمتابعة إلى النظام.</p></div>
+<form id="authForm">
+<div class="field"><label for="email">البريد الإلكتروني</label><div class="input-wrap"><span class="field-icon">♙</span><input id="email" name="email" type="email" placeholder="أدخل بريدك الإلكتروني" autocomplete="email" required></div></div>
+<div class="field" id="passwordField"><label for="password">كلمة المرور</label><div class="input-wrap"><span class="field-icon">⌑</span><input id="password" name="password" type="password" placeholder="أدخل كلمة المرور" autocomplete="current-password" required minlength="6"><button class="toggle" type="button" id="togglePassword">إظهار</button></div></div>
+<div class="field" id="confirmField" hidden><label for="confirmPassword">تأكيد كلمة المرور</label><div class="input-wrap"><span class="field-icon">⌑</span><input id="confirmPassword" type="password" placeholder="أعد كتابة كلمة المرور" autocomplete="new-password" minlength="6"></div></div>
+<div class="preferences" id="loginOptions"><label class="remember"><input type="checkbox" id="remember"> تذكّرني</label><a href="#reset" id="forgot">نسيت كلمة المرور؟</a></div>
+<button class="login-btn" id="submitButton" type="submit">تسجيل الدخول &nbsp; ←</button>
+<button class="secondary-btn" id="switchMode" type="button">إنشاء حساب جديد</button>
+<button class="secondary-btn" id="backToLogin" type="button" hidden>العودة إلى تسجيل الدخول</button>
+<div class="message" id="message" role="status" aria-live="polite"></div>
+</form>
+<div class="divider"></div><div class="bottom">كل فكرة عظيمة تبدأ بمحاولة.<strong>CODE YOUR FUTURE</strong></div>
+</section>
+<footer>صُنعت بشغف &nbsp; <span>✦</span> &nbsp; عالم التقنية والإبداع</footer>
 </main>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 "use strict";
-
-// إعدادات مشروع Supabase الخاص بك
 const SUPABASE_URL = "https://wteztoggppyksbdhpoxx.supabase.co";
 const SUPABASE_KEY = "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
-
-// غيّري هذا الرابط بعد تجهيز صفحة داخلية فعلية.
-// اتركيه فارغًا إلى أن تنشئي صفحة لوحة التحكم.
+const RESET_PASSWORD_URL = "https://safa06052-ai.github.io/it-college-login/reset-password.html";
 const DASHBOARD_URL = "";
 
-const form = document.getElementById("authForm");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const confirmInput = document.getElementById("confirmPassword");
-const confirmField = document.getElementById("confirmField");
-const passwordField = document.getElementById("passwordField");
-const togglePassword = document.getElementById("togglePassword");
-const submitButton = document.getElementById("submitButton");
-const switchMode = document.getElementById("switchMode");
-const backToLogin = document.getElementById("backToLogin");
-const forgot = document.getElementById("forgot");
-const loginOptions = document.getElementById("loginOptions");
-const message = document.getElementById("message");
-const formTitle = document.getElementById("formTitle");
-const formDescription = document.getElementById("formDescription");
-
-let supabaseClient;
-let mode = "login";
-
-function showMessage(text, success = false) {
-  message.style.display = "block";
-  message.textContent = text;
-  message.style.color = success ? "#52efff" : "#ffb4c8";
-  message.style.borderColor = success
-    ? "rgba(82,239,255,.35)"
-    : "rgba(255,130,170,.35)";
-}
-
-function hideMessage() {
-  message.style.display = "none";
-  message.textContent = "";
-}
-
-function setMode(nextMode) {
-  mode = nextMode;
-  hideMessage();
-
-  const isSignup = mode === "signup";
-  const isReset = mode === "reset";
-
-  passwordField.hidden = isReset;
-  confirmField.hidden = !isSignup;
-  loginOptions.hidden = isSignup || isReset;
-  switchMode.hidden = isReset;
-  backToLogin.hidden = !isReset;
-
-  passwordInput.required = !isReset;
-  confirmInput.required = isSignup;
-
-  passwordInput.autocomplete = isSignup
-    ? "new-password" : "current-password";
-
-  if (isSignup) {
-    formTitle.textContent = "إنشاء حساب";
-    formDescription.textContent = "أنشئ حسابك للانضمام إلى البوابة الرقمية.";
-    submitButton.textContent = "إنشاء الحساب";
-    switchMode.textContent = "لديك حساب؟ تسجيل الدخول";
-  } else if (isReset) {
-    formTitle.textContent = "استعادة الحساب";
-    formDescription.textContent = "أدخل بريدك الإلكتروني لطلب رابط الاستعادة.";
-    submitButton.textContent = "إرسال رابط الاستعادة";
-  } else {
-    formTitle.textContent = "أهلًا بك";
-    formDescription.textContent = "أدخل بيانات الحساب للمتابعة إلى النظام.";
-    submitButton.textContent = "تسجيل الدخول  ←";
-    switchMode.textContent = "إنشاء حساب جديد";
-  }
-}
-
-function setLoading(loading) {
-  submitButton.disabled = loading;
-  submitButton.style.opacity = loading ? ".65" : "1";
-}
-
-togglePassword.addEventListener("click", () => {
-  const hidden = passwordInput.type === "password";
-  passwordInput.type = hidden ? "text" : "password";
-  togglePassword.textContent = hidden ? "إخفاء" : "إظهار";
-});
-
-switchMode.addEventListener("click", () => {
-  setMode(mode === "login" ? "signup" : "login");
-});
-
-backToLogin.addEventListener("click", () => setMode("login"));
-
-forgot.addEventListener("click", (event) => {
-  event.preventDefault();
-  setMode("reset");
-});
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  hideMessage();
-
-  if (!supabaseClient) {
-    showMessage("تعذّر تحميل خدمة الدخول. تحققي من الإنترنت وأعيدي فتح الصفحة.");
-    return;
-  }
-
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-
-  if (mode === "signup" && password !== confirmInput.value) {
-    showMessage("كلمتا المرور غير متطابقتين.");
-    confirmInput.focus();
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    if (mode === "login") {
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        showMessage("تعذّر تسجيل الدخول. تحققي من البريد وكلمة المرور، ومن تأكيد الحساب.");
-        return;
-      }
-
-      showMessage(
-        "تم تسجيل الدخول بنجاح، أهلًا بك " +
-        (data.user?.email || "") + "!",
-        true
-      );
-
-      if (DASHBOARD_URL) {
-        window.location.assign(DASHBOARD_URL);
-      }
-
-    } else if (mode === "signup") {
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password
-      });
-
-      if (error) {
-        showMessage("تعذّر إنشاء الحساب. تحققي من البيانات وإعدادات التسجيل.");
-        return;
-      }
-
-      if (data.session) {
-        showMessage("تم إنشاء الحساب وتسجيل الدخول بنجاح.", true);
-      } else {
-        showMessage(
-          "تم إرسال طلب إنشاء الحساب. تحققي من بريدك الإلكتروني لتأكيده إذا كان التأكيد مطلوبًا.",
-          true
-        );
-      }
-
-    } else if (mode === "reset") {
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-  redirectTo: "http://localhost:7700/reset-password.html"
-});
-
-      if (error) {
-        showMessage("تعذّر إرسال طلب الاستعادة. تحققي من الاتصال والإعدادات.");
-        return;
-      }
-
-      showMessage(
-        "إذا كان البريد مسجلًا، فستصلك رسالة الاستعادة عند نجاح الإرسال. تحققي من صندوق الوارد.",
-        true
-      );
-    }
-
-  } catch (error) {
-    showMessage("حدث خطأ في الاتصال. حاولي مجددًا.");
-  } finally {
-    setLoading(false);
-  }
-});
-
-// استعادة جلسة المستخدم من Supabase عند فتح الصفحة
-async function initializeApp() {
-  if (!window.supabase) {
-    showMessage("لم تُحمّل مكتبة Supabase. تحققي من الإنترنت.");
-    return;
-  }
-
-  supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    }
-  );
-
-  const { data, error } = await supabaseClient.auth.getSession();
-
-  if (!error && data.session) {
-    showMessage(
-      "أنت مسجل الدخول بالفعل: " +
-      (data.session.user.email || ""),
-      true
-    );
-  }
-}
-
+const form=document.getElementById("authForm"),emailInput=document.getElementById("email"),passwordInput=document.getElementById("password"),confirmInput=document.getElementById("confirmPassword"),confirmField=document.getElementById("confirmField"),passwordField=document.getElementById("passwordField"),togglePassword=document.getElementById("togglePassword"),submitButton=document.getElementById("submitButton"),switchMode=document.getElementById("switchMode"),backToLogin=document.getElementById("backToLogin"),forgot=document.getElementById("forgot"),loginOptions=document.getElementById("loginOptions"),message=document.getElementById("message"),formTitle=document.getElementById("formTitle"),formDescription=document.getElementById("formDescription");
+let supabaseClient,mode="login";
+function showMessage(text,success=false){message.style.display="block";message.textContent=text;message.style.color=success?"#52efff":"#ffb4c8";message.style.borderColor=success?"rgba(82,239,255,.35)":"rgba(255,130,170,.35)"}
+function hideMessage(){message.style.display="none";message.textContent=""}
+function setMode(nextMode){mode=nextMode;hideMessage();const isSignup=mode==="signup",isReset=mode==="reset";passwordField.hidden=isReset;confirmField.hidden=!isSignup;loginOptions.hidden=isSignup||isReset;switchMode.hidden=isReset;backToLogin.hidden=!isReset;passwordInput.required=!isReset;confirmInput.required=isSignup;passwordInput.autocomplete=isSignup?"new-password":"current-password";
+if(isSignup){formTitle.textContent="إنشاء حساب";formDescription.textContent="أنشئ حسابك للانضمام إلى البوابة الرقمية.";submitButton.textContent="إنشاء الحساب";switchMode.textContent="لديك حساب؟ تسجيل الدخول"}
+else if(isReset){formTitle.textContent="استعادة الحساب";formDescription.textContent="أدخل بريدك الإلكتروني لطلب رابط الاستعادة.";submitButton.textContent="إرسال رابط الاستعادة"}
+else{formTitle.textContent="أهلًا بك";formDescription.textContent="أدخل بيانات الحساب للمتابعة إلى النظام.";submitButton.textContent="تسجيل الدخول ←";switchMode.textContent="إنشاء حساب جديد"}}
+function setLoading(loading){submitButton.disabled=loading;submitButton.style.opacity=loading?".65":"1"}
+togglePassword.addEventListener("click",()=>{const hidden=passwordInput.type==="password";passwordInput.type=hidden?"text":"password";togglePassword.textContent=hidden?"إخفاء":"إظهار"});
+switchMode.addEventListener("click",()=>setMode(mode==="login"?"signup":"login"));backToLogin.addEventListener("click",()=>setMode("login"));
+forgot.addEventListener("click",event=>{event.preventDefault();setMode("reset")});
+form.addEventListener("submit",async event=>{event.preventDefault();hideMessage();if(!supabaseClient){showMessage("تعذّر تحميل خدمة الدخول. تحققي من الإنترنت وأعيدي فتح الصفحة.");return}
+const email=emailInput.value.trim(),password=passwordInput.value;
+if(mode==="signup"&&password!==confirmInput.value){showMessage("كلمتا المرور غير متطابقتين.");confirmInput.focus();return}
+setLoading(true);
+try{
+if(mode==="login"){const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){showMessage("تعذّر تسجيل الدخول. تحققي من البريد وكلمة المرور، ومن تأكيد الحساب.");return}
+showMessage("تم تسجيل الدخول بنجاح، أهلًا بك "+(data.user?.email||"")+"!",true);if(DASHBOARD_URL)window.location.assign(DASHBOARD_URL)}
+else if(mode==="signup"){const {data,error}=await supabaseClient.auth.signUp({email,password});if(error){showMessage("تعذّر إنشاء الحساب. تحققي من البيانات وإعدادات التسجيل.");return}
+if(data.session)showMessage("تم إنشاء الحساب وتسجيل الدخول بنجاح.",true);else showMessage("تم إرسال طلب إنشاء الحساب. تحققي من بريدك الإلكتروني لتأكيده إذا كان التأكيد مطلوبًا.",true)}
+else if(mode==="reset"){const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:RESET_PASSWORD_URL});if(error){showMessage("تعذّر إرسال طلب الاستعادة. تحققي من الاتصال والإعدادات.");return}
+showMessage("إذا كان البريد مسجلًا، فستصلك رسالة الاستعادة. تحققي من صندوق الوارد.",true)}
+}catch(error){showMessage("حدث خطأ في الاتصال. حاولي مجددًا.")}finally{setLoading(false)}});
+async function initializeApp(){if(!window.supabase){showMessage("لم تُحمّل مكتبة Supabase. تحققي من الإنترنت.");return}
+supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const {data,error}=await supabaseClient.auth.getSession();if(!error&&data.session)showMessage("أنت مسجل الدخول بالفعل: "+(data.session.user.email||""),true)}
 initializeApp();
 </script>
 </body>
