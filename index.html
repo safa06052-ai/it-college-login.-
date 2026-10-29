@@ -87,7 +87,10 @@ const email=emailInput.value.trim(),password=passwordInput.value;
 if(mode==="signup"&&password!==confirmInput.value){showMessage("كلمتا المرور غير متطابقتين.");confirmInput.focus();return}
 setLoading(true);
 try{
-if(mode==="login"){const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){showMessage("تعذّر تسجيل الدخول. تحققي من البريد وكلمة المرور، ومن تأكيد الحساب.");return}
+if(mode==="login"){const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){
+  showMessage("سبب الخطأ: " + error.message);
+  return;
+}
 showMessage("تم تسجيل الدخول بنجاح، أهلًا بك "+(data.user?.email||"")+"!",true);if(DASHBOARD_URL)window.location.assign(DASHBOARD_URL)}
 else if(mode==="signup"){const {data,error}=await supabaseClient.auth.signUp({email,password});if(error){showMessage("تعذّر إنشاء الحساب. تحققي من البيانات وإعدادات التسجيل.");return}
 if(data.session)showMessage("تم إنشاء الحساب وتسجيل الدخول بنجاح.",true);else showMessage("تم إرسال طلب إنشاء الحساب. تحققي من بريدك الإلكتروني لتأكيده إذا كان التأكيد مطلوبًا.",true)}
