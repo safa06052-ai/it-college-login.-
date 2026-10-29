@@ -100,9 +100,36 @@ else if(mode==="reset"){const {error}=await supabaseClient.auth.resetPasswordFor
 }
 showMessage("إذا كان البريد مسجلًا، فستصلك رسالة الاستعادة. تحققي من صندوق الوارد.",true)}
 }catch(error){showMessage("حدث خطأ في الاتصال. حاولي مجددًا.")}finally{setLoading(false)}});
-async function initializeApp(){if(!window.supabase){showMessage("لم تُحمّل مكتبة Supabase. تحققي من الإنترنت.");return}
-supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-const {data,error}=await supabaseClient.auth.getSession();if(!error&&data.session)showMessage("أنت مسجل الدخول بالفعل: "+(data.session.user.email||""),true)}
+async function initializeApp(){
+  if(!window.supabase){
+    showMessage("لم تُحمّل مكتبة Supabase. تحققي من الإنترنت.");
+    return;
+  }
+
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true
+      }
+    }
+  );
+
+  const {data,error} = await supabaseClient.auth.getSession();
+
+  if(error){
+    showMessage("حدث خطأ في التحقق من تسجيل الدخول.");
+    return;
+  }
+
+  if(data.session){
+    window.location.replace(DASHBOARD_URL);
+  }
+}
+
 initializeApp();
 </script>
 </body>
