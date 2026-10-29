@@ -82,10 +82,7 @@ function setLoading(loading){submitButton.disabled=loading;submitButton.style.op
 togglePassword.addEventListener("click",()=>{const hidden=passwordInput.type==="password";passwordInput.type=hidden?"text":"password";togglePassword.textContent=hidden?"إخفاء":"إظهار"});
 switchMode.addEventListener("click",()=>setMode(mode==="login"?"signup":"login"));backToLogin.addEventListener("click",()=>setMode("login"));
 forgot.addEventListener("click",event=>{event.preventDefault();setMode("reset")});
-form.addEventListener("submit",async event=>{event.preventDefault();hideMessage();if(error){
-  showMessage("خطأ الاستعادة: " + error.message);
-  return;
-}
+form.addEventListener("submit",async event=>{event.preventDefault();hideMessage();
 const email=emailInput.value.trim(),password=passwordInput.value;
 if(mode==="signup"&&password!==confirmInput.value){showMessage("كلمتا المرور غير متطابقتين.");confirmInput.focus();return}
 setLoading(true);
