@@ -661,7 +661,15 @@ document.head.appendChild(script);
 async function initializeDashboard() {
   const client = supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY
+    SUPABASE_KEY,
+    {
+      auth: {
+        storage: window.sessionStorage,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    }
   );
 
   const { data, error } = await client.auth.getSession();
