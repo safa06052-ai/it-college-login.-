@@ -107,16 +107,17 @@ async function initializeApp(){
   }
 
   supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth:{
-        persistSession:true,
-        autoRefreshToken:true,
-        detectSessionInUrl:true
-      }
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      storage: window.sessionStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
     }
-  );
+  }
+);
 
   const {data,error} = await supabaseClient.auth.getSession();
 
