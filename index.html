@@ -94,7 +94,10 @@ if(mode==="login"){const {data,error}=await supabaseClient.auth.signInWithPasswo
 showMessage("تم تسجيل الدخول بنجاح، أهلًا بك "+(data.user?.email||"")+"!",true);if(DASHBOARD_URL)window.location.assign(DASHBOARD_URL)}
 else if(mode==="signup"){const {data,error}=await supabaseClient.auth.signUp({email,password});if(error){showMessage("تعذّر إنشاء الحساب. تحققي من البيانات وإعدادات التسجيل.");return}
 if(data.session)showMessage("تم إنشاء الحساب وتسجيل الدخول بنجاح.",true);else showMessage("تم إرسال طلب إنشاء الحساب. تحققي من بريدك الإلكتروني لتأكيده إذا كان التأكيد مطلوبًا.",true)}
-else if(mode==="reset"){const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:RESET_PASSWORD_URL});if(error){showMessage("تعذّر إرسال طلب الاستعادة. تحققي من الاتصال والإعدادات.");return}
+else if(mode==="reset"){const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:RESET_PASSWORD_URL});if(error){
+  showMessage("خطأ الاستعادة: " + error.message);
+  return;
+}
 showMessage("إذا كان البريد مسجلًا، فستصلك رسالة الاستعادة. تحققي من صندوق الوارد.",true)}
 }catch(error){showMessage("حدث خطأ في الاتصال. حاولي مجددًا.")}finally{setLoading(false)}});
 async function initializeApp(){if(!window.supabase){showMessage("لم تُحمّل مكتبة Supabase. تحققي من الإنترنت.");return}
