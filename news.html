@@ -288,7 +288,7 @@ async function startPage() {
 
   } catch (error) {
     console.error(error);
-    statusBox.textContent = "تعذر التحقق من تسجيل الدخول. حاولي تحديث الصفحة.";
+    statusBox.textContent = "تفاصيل الخطأ: " + error.message;
   }
 }
 
