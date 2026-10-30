@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080b19">
-<title>ملفي الشخصي | كلية تقنية المعلومات</title>
+<title>الملف الشخصي | كلية تقنية المعلومات</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -199,6 +199,11 @@ a{text-decoration:none;color:inherit}
 
 .save-btn:hover{filter:brightness(1.15)}
 
+.save-btn:disabled{
+  opacity:.65;
+  cursor:wait;
+}
+
 .cancel-btn{
   border:1px solid var(--purple);
   color:#d2c5ff;background:transparent;
@@ -282,7 +287,7 @@ a{text-decoration:none;color:inherit}
 
     <a href="./profile.html" class="active">
       <i class="fa-solid fa-user"></i>
-      <span>ملفي الشخصي</span>
+      <span>الملف الشخصي</span>
     </a>
   </nav>
 
@@ -300,7 +305,7 @@ a{text-decoration:none;color:inherit}
   <div class="topbar-title">بوابة كلية تقنية المعلومات</div>
 
   <div class="topbar-actions">
-    <span id="welcomeEmail">ملفي الشخصي</span>
+    <span id="welcomeEmail">الملف الشخصي</span>
     <button type="button" id="topLogoutBtn" aria-label="تسجيل الخروج">
       <i class="fa-solid fa-right-from-bracket"></i>
     </button>
@@ -311,8 +316,8 @@ a{text-decoration:none;color:inherit}
 
 <section class="hero">
   <div>
-    <h1>ملفي الشخصي</h1>
-    <p>هنا يمكنك عرض بياناتك وتعديلها في أي وقت.</p>
+    <h1>الملف الشخصي</h1>
+    <p>يمكن عرض البيانات الشخصية وتعديلها في أي وقت.</p>
   </div>
 
   <div class="hero-icon">
@@ -324,7 +329,7 @@ a{text-decoration:none;color:inherit}
 
   <h2 class="panel-title">
     <i class="fa-solid fa-id-card"></i>
-    معلوماتي الأساسية
+    المعلومات الأساسية
   </h2>
 
   <form id="profileForm">
@@ -336,7 +341,7 @@ a{text-decoration:none;color:inherit}
         <input
           id="fullName"
           type="text"
-          placeholder="اكتبي اسمك الكامل"
+          placeholder="أدخل الاسم الكامل"
           maxlength="100"
           required
         >
@@ -347,7 +352,7 @@ a{text-decoration:none;color:inherit}
         <input
           id="studentNumber"
           type="text"
-          placeholder="أدخلي الرقم الجامعي"
+          placeholder="أدخل الرقم الجامعي"
           maxlength="30"
           required
         >
@@ -356,7 +361,7 @@ a{text-decoration:none;color:inherit}
       <div class="field">
         <label for="department">القسم</label>
         <select id="department" required>
-          <option value="">اختاري القسم</option>
+          <option value="">اختر القسم</option>
           <option value="القسم العام">القسم العام</option>
           <option value="هندسة البرمجيات">هندسة البرمجيات</option>
           <option value="الشبكات والاتصالات">الشبكات والاتصالات</option>
@@ -367,7 +372,7 @@ a{text-decoration:none;color:inherit}
       <div class="field">
         <label for="specialization">التخصص</label>
         <select id="specialization" required>
-          <option value="">اختاري التخصص</option>
+          <option value="">اختر التخصص</option>
           <option value="عام">عام</option>
           <option value="هندسة البرمجيات">هندسة البرمجيات</option>
           <option value="الشبكات والاتصالات">الشبكات والاتصالات</option>
@@ -380,7 +385,7 @@ a{text-decoration:none;color:inherit}
       <div class="field full">
         <label for="academicLevel">المستوى الدراسي</label>
         <select id="academicLevel" required>
-          <option value="">اختاري المستوى الدراسي</option>
+          <option value="">اختر المستوى الدراسي</option>
           <option value="السنة الأولى">السنة الأولى</option>
           <option value="السنة الثانية">السنة الثانية</option>
           <option value="السنة الثالثة">السنة الثالثة</option>
@@ -441,9 +446,11 @@ function clearStatus(){
 
 const script = document.createElement("script");
 script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
 script.onload = initializeProfile;
+
 script.onerror = () => {
-  showStatus("تعذر تحميل النظام. تأكدي من اتصال الإنترنت.","error");
+  showStatus("تعذر تحميل النظام. تحقق من اتصال الإنترنت.","error");
 };
 
 document.head.appendChild(script);
@@ -473,7 +480,7 @@ async function initializeProfile(){
   currentUser = data.session.user;
 
   document.getElementById("welcomeEmail").textContent =
-    currentUser.email || "ملفي الشخصي";
+    currentUser.email || "الملف الشخصي";
 
   await loadProfile();
 
@@ -483,7 +490,7 @@ async function initializeProfile(){
 
 async function loadProfile(){
 
-  showStatus("جاري تحميل بياناتك...","info");
+  showStatus("جاري تحميل البيانات...","info");
 
   const {data,error} = await client
     .from("student_profiles")
@@ -503,9 +510,9 @@ async function loadProfile(){
     document.getElementById("specialization").value = data.specialization || "";
     document.getElementById("academicLevel").value = data.academic_level || "";
 
-    showStatus("تم تحميل بيانات ملفك الشخصي.","success");
+    showStatus("تم تحميل بيانات الملف الشخصي.","success");
   }else{
-    showStatus("أهلًا بك! أدخلي بياناتك ثم اضغطي حفظ التغييرات.","info");
+    showStatus("أهلًا بك! أدخل البيانات ثم اضغط على حفظ التغييرات.","info");
   }
 }
 
@@ -539,19 +546,25 @@ form.addEventListener("submit",async function(event){
   saveBtn.disabled = true;
   saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
 
-  const {error} = await client
-    .from("student_profiles")
-    .upsert(profile,{onConflict:"user_id"});
+  try{
+    const {error} = await client
+      .from("student_profiles")
+      .upsert(profile,{onConflict:"user_id"});
 
-  saveBtn.disabled = false;
-  saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> حفظ التغييرات';
+    if(error){
+      showStatus("تعذر حفظ البيانات: " + error.message,"error");
+      return;
+    }
 
-  if(error){
-    showStatus("تعذر حفظ البيانات: " + error.message,"error");
-    return;
+    showStatus("تم حفظ بيانات الملف الشخصي بنجاح.","success");
+
+  }catch(error){
+    showStatus("حدث خطأ أثناء حفظ البيانات. حاول مرة أخرى.","error");
+
+  }finally{
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> حفظ التغييرات';
   }
-
-  showStatus("تم حفظ بيانات ملفك الشخصي بنجاح.","success");
 });
 
 form.addEventListener("reset",function(){
@@ -563,7 +576,7 @@ async function logout(){
   const {error} = await client.auth.signOut();
 
   if(error){
-    showStatus("تعذر تسجيل الخروج. حاولي مرة أخرى.","error");
+    showStatus("تعذر تسجيل الخروج. حاول مرة أخرى.","error");
     return;
   }
 
