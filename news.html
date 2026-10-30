@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إعلانات كلية تقنية المعلومات</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #080b19;
+  --panel: rgba(20, 25, 55, .72);
+  --purple: #9367ff;
+  --cyan: #52efff;
+  --text: #f4f5ff;
+  --muted: #a7accb;
+  --border: rgba(255,255,255,.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Cairo', sans-serif;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% 15%, #38216b 0, transparent 35%),
+    radial-gradient(circle at 85% 80%, #073d61 0, transparent 35%),
+    var(--bg);
+  padding: 25px 16px 50px;
+}
+
+.container {
+  max-width: 850px;
+  margin: auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.back {
+  color: white;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.06);
+  padding: 9px 17px;
+  border-radius: 12px;
+}
+
+.hero {
+  text-align: center;
+  margin: 45px 0 35px;
+}
+
+.hero .icon {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.hero h1 {
+  font-size: clamp(25px, 5vw, 38px);
+  background: linear-gradient(90deg, var(--purple), var(--cyan));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.glass {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 23px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 15px 50px rgba(0,0,0,.22);
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 19px;
+  margin-bottom: 18px;
+  color: var(--cyan);
+}
+
+.announcement {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-right: 3px solid var(--purple);
+  background: rgba(255,255,255,.035);
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.announcement h3 {
+  font-size: 18px;
+  margin-bottom: 9px;
+}
+
+.announcement p {
+  color: #d4d7e9;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.date {
+  color: var(--cyan);
+  font-size: 12px;
+  margin-top: 13px;
+}
+
+.empty, .status {
+  text-align: center;
+  color: var(--muted);
+  padding: 25px 10px;
+}
+
+.admin-panel {
+  display: none;
+}
+
+input, textarea {
+  width: 100%;
+  margin-bottom: 13px;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: rgba(5,10,30,.65);
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  background: linear-gradient(110deg, var(--purple), #526dff, #168eae);
+  color: white;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+.delete {
+  background: #a63862;
+  margin-top: 12px;
+  padding: 7px 13px;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 35px;
+}
+
+@media(max-width: 500px) {
+  .glass { padding: 17px; }
+  .hero { margin-top: 30px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">IT COLLEGE</div>
+  <a class="back" href="./dashboard.html">العودة للوحة التحكم ←</a>
+</header>
+
+<section class="hero">
+  <div class="icon">📢</div>
+  <h1>إعلانات الكلية</h1>
+  <p>تابع آخر الأخبار والتنبيهات والإعلانات الأكاديمية</p>
+</section>
+
+<section class="glass">
+  <h2 class="section-title">آخر الإعلانات</h2>
+  <div id="status" class="status">جارٍ تحميل الإعلانات...</div>
+  <div id="announcements"></div>
+</section>
+
+<section class="glass admin-panel" id="adminPanel">
+  <h2 class="section-title">إضافة إعلان جديد</h2>
+
+  <form id="announcementForm">
+    <input id="title" type="text" placeholder="عنوان الإعلان" required maxlength="150">
+    <textarea id="content" placeholder="اكتب تفاصيل الإعلان هنا..." required maxlength="10000"></textarea>
+    <button id="submitBtn" type="submit">نشر الإعلان</button>
+  </form>
+  <p id="adminMessage" class="status"></p>
+</section>
+
+<footer>
+  كلية تقنية المعلومات © 2026
+</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://wteztoggppyksbdhpoxx.supabase.co";
+const SUPABASE_KEY = "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage
+    }
+  }
+);
+
+const statusBox = document.getElementById("status");
+const announcementsBox = document.getElementById("announcements");
+const adminPanel = document.getElementById("adminPanel");
+
+let isAdmin = false;
+
+async function startPage() {
+  try {
+    const { data: sessionData, error: sessionError } =
+      await db.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    const user = sessionData.session?.user;
+
+    if (!user) {
+      location.replace("./index.html");
+      return;
+    }
+
+    const { data: role, error: roleError } = await db
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (roleError) throw roleError;
+
+    isAdmin = role?.role === "admin";
+
+    if (isAdmin) {
+      adminPanel.style.display = "block";
+    }
+
+    await loadAnnouncements();
+
+  } catch (error) {
+    console.error(error);
+    statusBox.textContent = "تعذر التحقق من تسجيل الدخول. حاولي تحديث الصفحة.";
+  }
+}
+
+async function loadAnnouncements() {
+  statusBox.textContent = "جارٍ تحميل الإعلانات...";
+  announcementsBox.innerHTML = "";
+
+  const { data, error } = await db
+    .from("announcements")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    statusBox.textContent = "تعذر تحميل الإعلانات. تحققي من اتصال قاعدة البيانات والصلاحيات.";
+    console.error(error);
+    return;
+  }
+
+  statusBox.style.display = "none";
+
+  if (!data || data.length === 0) {
+    statusBox.style.display = "block";
+    statusBox.textContent = "لا توجد إعلانات حاليًا.";
+    return;
+  }
+
+  data.forEach(item => {
+    const article = document.createElement("article");
+    article.className = "announcement";
+
+    const heading = document.createElement("h3");
+    heading.textContent = item.title || "إعلان جديد";
+
+    const paragraph = document.createElement("p");
+    paragraph.textContent = item.content || "";
+
+    const date = document.createElement("div");
+    date.className = "date";
+    date.textContent = item.created_at
+      ? new Date(item.created_at).toLocaleString("ar-LY")
+      : "";
+
+    article.append(heading, paragraph, date);
+
+    if (isAdmin) {
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete";
+      deleteBtn.textContent = "حذف الإعلان";
+      deleteBtn.addEventListener("click", () => deleteAnnouncement(item.id));
+      article.appendChild(deleteBtn);
+    }
+
+    announcementsBox.appendChild(article);
+  });
+}
+
+document.getElementById("announcementForm")
+.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!isAdmin) return;
+
+  const title = document.getElementById("title").value.trim();
+  const content = document.getElementById("content").value.trim();
+  const submitBtn = document.getElementById("submitBtn");
+  const message = document.getElementById("adminMessage");
+
+  if (!title || !content) return;
+
+  submitBtn.disabled = true;
+  message.textContent = "جارٍ نشر الإعلان...";
+
+  try {
+    const { data: userData, error: userError } =
+      await db.auth.getUser();
+
+    if (userError) throw userError;
+
+    const { error } = await db.from("announcements").insert({
+      title,
+      content,
+      created_by: userData.user.id
+    });
+
+    if (error) throw error;
+
+    event.target.reset();
+    message.textContent = "تم نشر الإعلان بنجاح.";
+    await loadAnnouncements();
+
+  } catch (error) {
+    console.error(error);
+    message.textContent = "تعذر نشر الإعلان: " + error.message;
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+async function deleteAnnouncement(id) {
+  if (!isAdmin) return;
+
+  if (!confirm("هل أنت متأكد من حذف هذا الإعلان؟")) return;
+
+  const { error } = await db
+    .from("announcements")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    alert("تعذر حذف الإعلان: " + error.message);
+    return;
+  }
+
+  await loadAnnouncements();
+}
+
+startPage();
+</script>
+</body>
+</html>
