@@ -451,10 +451,10 @@ async function checkUser() {
       .maybeSingle();
 
   if (roleError) {
-    console.error(roleError);
-    alert("تعذر التحقق من صلاحيات الحساب.");
-    return false;
-  }
+  console.error("Role check error:", roleError);
+  alert("خطأ الصلاحيات: " + roleError.message);
+  return false;
+}
 
   isAdmin = roleData?.role === "admin";
 
