@@ -1,505 +1,369 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#070b20">
-<title>أقسام كلية تقنية المعلومات</title>
+<meta name="theme-color" content="#080b19">
+<title>بوابة كلية تقنية المعلومات</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
 :root {
-  --bg: #080b19;
-  --purple: #9367ff;
-  --cyan: #52efff;
-  --pink: #e879f9;
-  --text: #f1f0ff;
-  --muted: #b7b9df;
-  --border: rgba(147,103,255,.35);
-  --panel: rgba(17,22,46,.82);
-} 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  --bg:#080b19;
+  --purple:#9367ff;
+  --cyan:#52efff;
+  --pink:#e879f9;
+  --text:#f1f0ff;
+  --muted:#b7b9df;
+  --border:rgba(147,103,255,.35);
+  --panel:rgba(17,22,46,.82);
 }
 
-body {
-  font-family: 'Cairo', sans-serif;
-  color: var(--text);
-  min-height: 100vh;
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Cairo',sans-serif;
+  color:var(--text);
+  min-height:100vh;
   background:
-    radial-gradient(ellipse at 85% 10%, #49258a66 0, transparent 40%),
-    radial-gradient(ellipse at 10% 85%, #153b8066 0, transparent 38%),
-    radial-gradient(ellipse at 50% 50%, #24104b44 0, transparent 60%),
+    radial-gradient(ellipse at 85% 10%,#49258a66,transparent 40%),
+    radial-gradient(ellipse at 10% 85%,#153b8066,transparent 38%),
     var(--bg);
 }
-button, a { font: inherit; }
-button { cursor: pointer; }
-a { color: inherit; text-decoration: none; }
 
-.app {
-  display: flex;
-  min-height: 100vh;
+button{font:inherit;cursor:pointer}
+button,a{-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+
+.app{display:flex;min-height:100vh}
+
+.sidebar{
+  width:235px;flex-shrink:0;padding:24px 16px;
+  border-left:1px solid var(--border);
+  background:rgba(7,13,39,.88);
+  display:flex;flex-direction:column;
+  min-height:100vh;
 }
 
-.sidebar {
-  width: 235px;
-  flex-shrink: 0;
-  padding: 24px 16px;
-  border-left: 1px solid var(--border);
-  background: rgba(7,13,39,.88);
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+.brand{
+  display:flex;align-items:center;gap:12px;
+  padding:0 12px 28px;color:#a8baff;
+  font-size:15px;font-weight:800;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 12px 28px;
-  color: #a8baff;
-  font-size: 15px;
-  font-weight: 800;
+.brand i{color:#8b75ff;font-size:25px}
+
+.nav{display:grid;gap:9px}
+
+.nav a,.logout{
+  display:flex;align-items:center;gap:15px;
+  padding:13px 15px;border:1px solid transparent;
+  border-radius:12px;color:#b8caff;transition:.2s;
 }
 
-.brand i {
-  color: #8b75ff;
-  font-size: 25px;
-  filter: drop-shadow(0 0 10px #665bff);
+.nav a i,.logout i{width:23px;text-align:center;font-size:19px}
+
+.nav a:hover,.nav a.active{
+  color:white;background:linear-gradient(110deg,#25228b,#5426bd);
+  border-color:#775aff;box-shadow:0 0 18px #3e32b633;
 }
 
-.nav {
-  display: grid;
-  gap: 9px;
+.sidebar-bottom{
+  margin-top:auto;padding-top:25px;
+  border-top:1px solid var(--border);
 }
 
-.nav a, .logout {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 13px 15px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  color: #b8caff;
-  transition: .2s;
+.logout{
+  width:100%;background:transparent;border:0;
+  color:#ef75ff;text-align:right;
 }
 
-.nav a i, .logout i {
-  width: 23px;
-  text-align: center;
-  font-size: 19px;
+.main{flex:1;min-width:0}
+
+.topbar{
+  min-height:74px;padding:0 30px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,14,42,.72);
 }
 
-.nav a:hover, .nav a.active {
-  color: white;
-  background: linear-gradient(110deg,#25228b,#5426bd);
-  border-color: #775aff;
-  box-shadow: 0 0 18px #3e32b633;
+.topbar-title{font-weight:800;color:#bdcaff}
+
+.topbar-actions{display:flex;gap:23px;color:#a9baff}
+
+.topbar-actions button{
+  color:inherit;background:none;border:0;font-size:20px;
 }
 
-.sidebar-bottom {
-  margin-top: auto;
-  padding-top: 25px;
-  border-top: 1px solid var(--border);
+.content{max-width:1450px;margin:auto;padding:28px}
+
+.hero{
+  min-height:225px;padding:35px;position:relative;
+  overflow:hidden;display:flex;align-items:center;
+  border:1px solid #3459ff;border-radius:20px;
+  background:linear-gradient(90deg,rgba(5,12,43,.96),rgba(13,24,72,.72));
+  box-shadow:inset 0 0 35px #243fff20;
 }
 
-.logout {
-  width: 100%;
-  background: transparent;
-  border: 0;
-  color: #ef75ff;
-  text-align: right;
+.hero:after{
+  content:'</>';position:absolute;left:7%;bottom:-45px;
+  font-family:monospace;font-size:180px;font-weight:bold;
+  color:#315cff0b;pointer-events:none;
 }
 
-.logout:hover {
-  background: #37134d55;
+.hero-text{position:relative;z-index:1}
+.hero h1{font-size:clamp(29px,4vw,43px);color:#e4eaff;margin-bottom:12px}
+.hero p{color:#b5ccff;line-height:2;font-size:15px}
+
+.section-heading{
+  display:flex;align-items:center;gap:12px;
+  margin:32px 0 20px;font-size:23px;color:#a8adff;
 }
 
-.main {
-  flex: 1;
-  min-width: 0;
+.section-heading i{color:#b16cff}
+
+.departments{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;
 }
 
-.topbar {
-  height: 74px;
-  padding: 0 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  background: rgba(8,14,42,.72);
+.department{
+  --accent:var(--purple);--accent-soft:#35206e;
+  padding:25px;border:1px solid var(--accent);border-radius:19px;
+  background:linear-gradient(135deg,rgba(35,27,75,.78),rgba(12,20,48,.76));
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:inset 0 0 25px rgba(147,103,255,.08),0 8px 30px #05051e40;
+  transition:.3s;min-width:0;
 }
 
-.topbar-title {
-  font-weight: 800;
-  color: #bdcaff;
+.department:hover{transform:translateY(-4px);box-shadow:0 8px 30px #4d40ff20}
+.department.cyan{--accent:var(--cyan);--accent-soft:#004c82}
+.department.pink{--accent:var(--pink);--accent-soft:#51155f}
+
+.department-content{display:flex;align-items:center;gap:20px}
+
+.department-icon{
+  width:90px;height:90px;flex-shrink:0;
+  display:grid;place-items:center;border-radius:23px;
+  color:var(--accent);font-size:38px;
+  background:linear-gradient(145deg,var(--accent-soft),#121846);
+  border:1px solid #ffffff0b;
+  text-shadow:0 0 18px var(--accent);
 }
 
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 23px;
-  color: #a9baff;
+.department-info{flex:1;min-width:0}
+.department h3{color:#e3eaff;font-size:20px;margin-bottom:9px}
+.department p{color:var(--muted);font-size:13px;line-height:2}
+
+.open-btn{
+  width:43px;height:43px;flex-shrink:0;border-radius:50%;
+  border:1px solid var(--accent);background:#17194c;
+  color:var(--accent);font-size:17px;transition:.2s;
 }
 
-.topbar-actions button {
-  color: inherit;
-  background: none;
-  border: 0;
-  font-size: 20px;
+.open-btn:hover{background:var(--accent);color:#071027}
+
+.computer-science{
+  grid-column:1/-1;border-color:#6254ff;
+  background:linear-gradient(135deg,#111849e8,#0a1231ed);
 }
 
-.content {
-  max-width: 1450px;
-  margin: auto;
-  padding: 28px;
+.cs-header{display:flex;align-items:center;gap:20px;margin-bottom:22px}
+.cs-header .department-icon{--accent:#9a83ff;--accent-soft:#33209b}
+.cs-header .department-info{flex:1}
+
+.subdepartments{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;padding-right:15px;
+  border-right:2px solid #6654ff66;margin-right:20px;
 }
 
-.hero {
-  min-height: 225px;
-  padding: 35px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  border: 1px solid #3459ff;
-  border-radius: 20px;
-  background:
-    linear-gradient(90deg,rgba(5,12,43,.96),rgba(13,24,72,.72)),
-    radial-gradient(ellipse at 80% 40%,#1648a0,transparent 60%);
-  box-shadow: inset 0 0 35px #243fff20;
+.subdepartments .department{padding:17px;border-radius:16px}
+.subdepartments .department-content{gap:13px}
+.subdepartments .department-icon{width:65px;height:65px;font-size:27px}
+.subdepartments .department h3{font-size:16px}
+.subdepartments .department p{font-size:12px}
+
+/* واجهة المواد */
+
+#coursesView{display:none}
+
+.back-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:#17194c;border:1px solid var(--purple);
+  color:#c9b8ff;padding:10px 18px;border-radius:12px;
+  margin-bottom:22px;transition:.2s;
 }
 
-.hero:after {
-  content: '</>';
-  position: absolute;
-  left: 7%;
-  bottom: -45px;
-  font-family: monospace;
-  font-size: 180px;
-  font-weight: bold;
-  color: #315cff0b;
-  pointer-events: none;
+.back-btn:hover{background:#30206b}
+
+.page-heading{
+  padding:25px;margin-bottom:22px;border:1px solid var(--border);
+  border-radius:19px;
+  background:linear-gradient(120deg,#171b50cc,#11172fcc);
+  box-shadow:inset 0 0 25px #9367ff12;
 }
 
-.hero-text {
-  position: relative;
-  z-index: 1;
+.page-heading h1{font-size:27px;color:#e8e5ff}
+.page-heading p{color:var(--muted);font-size:13px;margin-top:7px}
+
+.course-layout{
+  display:grid;grid-template-columns:minmax(230px,.85fr) minmax(0,1.5fr);
+  gap:20px;align-items:stretch;
 }
 
-.hero h1 {
-  font-size: clamp(29px,4vw,43px);
-  color: #e4eaff;
-  margin-bottom: 12px;
-  text-shadow: 0 0 22px #627aff65;
+.glass-panel{
+  border:1px solid var(--border);border-radius:20px;
+  background:var(--panel);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:inset 0 0 30px #9367ff0d,0 10px 35px #0003;
+  padding:22px;min-width:0;
 }
 
-.hero p {
-  color: #b5ccff;
-  line-height: 2;
-  font-size: 15px;
+.panel-title{
+  display:flex;align-items:center;gap:11px;
+  color:#c7b8ff;font-size:18px;margin-bottom:19px;
 }
 
-.section-heading {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 32px 0 20px;
-  font-size: 23px;
-  color: #a8adff;
+.panel-title i{color:var(--cyan)}
+
+.course-list{display:grid;gap:11px}
+
+.course-item{
+  display:flex;align-items:center;gap:12px;
+  width:100%;text-align:right;padding:14px;
+  border-radius:13px;border:1px solid #ffffff12;
+  background:linear-gradient(110deg,#171b3b,#111832);
+  color:#dcdfff;transition:.2s;
 }
 
-.section-heading i {
-  color: #b16cff;
+.course-item:hover,.course-item.selected{
+  border-color:var(--purple);
+  background:linear-gradient(110deg,#29205e,#18204a);
+  box-shadow:0 0 18px #9367ff22;
 }
 
-.departments {
-  display: grid;
-  grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 20px;
+.course-number{
+  width:34px;height:34px;flex-shrink:0;
+  display:grid;place-items:center;border-radius:10px;
+  color:var(--cyan);background:#16365a;font-size:12px;
 }
 
-.department {
-  --accent: var(--purple);
-  --accent-soft: #35206e;
+.course-name{flex:1;font-size:13px;font-weight:700}
+.course-item i:last-child{color:#9b83ff}
 
-  padding: 25px;
-  border: 1px solid var(--accent);
-  border-radius: 19px;
-
-  background: linear-gradient(
-    135deg,
-    rgba(35,27,75,.78),
-    rgba(12,20,48,.76)
-  );
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  box-shadow:
-    inset 0 0 25px rgba(147,103,255,.08),
-    0 8px 30px rgba(5,5,30,.25);
-
-  transition: .3s;
-  min-width: 0;
-} 
-
-.department:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px #4d40ff20;
+.details-panel{
+  position:relative;overflow:hidden;
+  background:linear-gradient(145deg,rgba(30,24,75,.85),rgba(12,22,52,.9));
 }
 
-.department.cyan {
-  --accent: var(--cyan);
-  --accent-soft: #004c82;
+.details-panel:after{
+  content:'</>';position:absolute;left:15px;bottom:-38px;
+  font-size:140px;font-family:monospace;font-weight:bold;
+  color:#52efff09;pointer-events:none;
 }
 
-.department.pink {
-  --accent: var(--pink);
-  --accent-soft: #51155f;
+.details-content{position:relative;z-index:1}
+
+.course-label{
+  display:inline-block;padding:6px 13px;
+  border:1px solid #9367ff77;border-radius:30px;
+  color:#c7b4ff;background:#9367ff18;font-size:11px;
+  margin-bottom:18px;
 }
 
-.department-content {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+.details-title{
+  color:var(--cyan);font-size:clamp(22px,3vw,30px);
+  margin-bottom:8px;text-shadow:0 0 18px #52efff33;
 }
 
-.department-icon {
-  width: 105px;
-  height: 105px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 23px;
-  color: var(--accent);
-  font-size: 43px;
-  background: linear-gradient(145deg,var(--accent-soft),#121846);
-  border: 1px solid #ffffff0b;
-  text-shadow: 0 0 18px var(--accent);
+.details-subtitle{color:#aeb7db;font-size:13px;margin-bottom:27px}
+
+.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+
+.info-card{
+  padding:17px;border-radius:14px;
+  border:1px solid #ffffff14;
+  background:linear-gradient(135deg,#20204499,#101b35cc);
+  min-width:0;
 }
 
-.department-info {
-  flex: 1;
-  min-width: 0;
+.info-card i{font-size:20px;color:var(--purple);margin-bottom:12px}
+.info-card:nth-child(2) i,.info-card:nth-child(4) i{color:var(--cyan)}
+.info-card small{display:block;color:#969fc6;font-size:11px;margin-bottom:5px}
+.info-card strong{display:block;color:#f0edff;font-size:14px;overflow-wrap:anywhere}
+
+.lecture-times{display:grid;gap:8px}
+.lecture-time{
+  padding:8px 10px;border-radius:9px;
+  background:#52efff0c;border:1px solid #52efff24;
+  color:#d8faff;font-size:13px;
 }
 
-.department h3 {
-  color: #e3eaff;
-  font-size: 20px;
-  margin-bottom: 9px;
+.empty-details{
+  min-height:340px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  color:#9ba8d1;gap:15px;
 }
 
-.department p {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 2;
+.empty-details i{font-size:55px;color:#8065d8;filter:drop-shadow(0 0 15px #9367ff55)}
+.empty-details h3{color:#dcd8ff;font-size:19px}
+.empty-details p{font-size:12px;line-height:2}
+
+.footer{
+  text-align:center;color:#657fca;font-size:12px;
+  letter-spacing:2px;padding:35px 10px 12px;
+}
+.footer span{color:#9d78ff}
+
+@media(max-width:850px){
+  .sidebar{width:190px;padding:20px 10px}
+  .content{padding:20px}
+  .department{padding:18px}
+  .department-icon{width:70px;height:70px;font-size:30px}
+  .department h3{font-size:16px}
+  .course-layout{grid-template-columns:1fr 1.4fr}
 }
 
-.open-btn {
-  width: 43px;
-  height: 43px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  border: 1px solid var(--accent);
-  background: #17194c;
-  color: var(--accent);
-  font-size: 17px;
-  transition: .2s;
-}
-
-.open-btn:hover {
-  background: var(--accent);
-  color: #071027;
-  box-shadow: 0 0 18px var(--accent);
-}
-
-.computer-science {
-  grid-column: 1 / -1;
-  border-color: #6254ff;
-  background: linear-gradient(135deg,#111849e8,#0a1231ed);
-}
-
-.cs-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 22px;
-}
-
-.cs-header .department-icon {
-  --accent: #9a83ff;
-  --accent-soft: #33209b;
-}
-
-.cs-header .department-info {
-  flex: 1;
-}
-
-.subdepartments {
-  display: grid;
-  grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 16px;
-  padding-right: 15px;
-  border-right: 2px solid #6654ff66;
-  margin-right: 20px;
-}
-
-.subdepartments .department {
-  padding: 17px;
-  border-radius: 16px;
-}
-
-.subdepartments .department-content {
-  gap: 13px;
-}
-
-.subdepartments .department-icon {
-  width: 78px;
-  height: 78px;
-  font-size: 30px;
-  border-radius: 18px;
-}
-
-.subdepartments .department h3 {
-  font-size: 16px;
-}
-
-.subdepartments .department p {
-  font-size: 12px;
-}
-
-.footer {
-  text-align: center;
-  color: #657fca;
-  font-size: 12px;
-  letter-spacing: 2px;
-  padding: 35px 10px 12px;
-}
-
-.footer span {
-  color: #9d78ff;
-}
-
-@media(max-width:850px) {
-  .sidebar { width: 190px; padding: 20px 10px; }
-  .content { padding: 20px; }
-  .department { padding: 18px; }
-  .department-content { gap: 13px; }
-  .department-icon {
-    width: 75px;
-    height: 75px;
-    font-size: 31px;
+@media(max-width:600px){
+  .app{display:block}
+  .sidebar{
+    width:100%;min-height:auto;padding:12px;
+    border-left:0;border-bottom:1px solid var(--border);
   }
-  .department h3 { font-size: 16px; }
-  .department p { font-size: 12px; }
-  .subdepartments .department-content { flex-wrap: wrap; }
-}
-
-@media(max-width:600px) {
-  .app { display: block; }
-
-  .sidebar {
-    width: 100%;
-    min-height: auto;
-    padding: 12px;
-    border-left: 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .brand { padding: 3px 8px 12px; }
-
-  .nav {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-
-  .nav a {
-    flex: 0 0 auto;
-    gap: 7px;
-    padding: 9px 11px;
-    font-size: 12px;
-  }
-
-  .nav a i {
-    font-size: 15px;
-    width: auto;
-  }
-
-  .sidebar-bottom { display: none; }
-
-  .topbar {
-    height: 55px;
-    padding: 0 17px;
-  }
-
-  .topbar-title { font-size: 13px; }
-  .content { padding: 16px 12px; }
-
-  .hero {
-    min-height: 175px;
-    padding: 24px 20px;
-    border-radius: 16px;
-  }
-
-  .hero h1 { font-size: 30px; }
-  .hero p { font-size: 12px; }
-
-  .section-heading {
-    font-size: 19px;
-    margin: 25px 0 15px;
-  }
-
-  .departments {
-    grid-template-columns: 1fr;
-    gap: 13px;
-  }
-
-  .computer-science { grid-column: auto; }
-  .department { padding: 17px; }
-
-  .department-icon {
-    width: 70px;
-    height: 70px;
-    font-size: 29px;
-  }
-
-  .department h3 { font-size: 16px; }
-  .department p { font-size: 12px; }
-
-  .subdepartments {
-    grid-template-columns: 1fr;
-    padding-right: 10px;
-    margin-right: 10px;
-    gap: 12px;
-  }
-
-  .subdepartments .department { padding: 13px; }
-  .subdepartments .department-content { flex-wrap: nowrap; }
-
-  .subdepartments .department-icon {
-    width: 58px;
-    height: 58px;
-    font-size: 24px;
-  }
-
-  .subdepartments .department h3 { font-size: 14px; }
-
-  .open-btn {
-    width: 36px;
-    height: 36px;
-  }
-
-  .footer {
-    letter-spacing: 1px;
-    padding-top: 26px;
-  }
+  .brand{padding:3px 8px 12px}
+  .nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+  .nav a{flex:0 0 auto;gap:7px;padding:9px 11px;font-size:12px}
+  .nav a i{font-size:15px;width:auto}
+  .sidebar-bottom{display:none}
+  .topbar{min-height:55px;padding:0 17px}
+  .topbar-title{font-size:13px}
+  .content{padding:16px 12px}
+  .hero{min-height:175px;padding:24px 20px;border-radius:16px}
+  .hero h1{font-size:30px}
+  .hero p{font-size:12px}
+  .section-heading{font-size:19px;margin:25px 0 15px}
+  .departments{grid-template-columns:1fr;gap:13px}
+  .computer-science{grid-column:auto}
+  .department{padding:17px}
+  .department-content{gap:12px}
+  .department-icon{width:65px;height:65px;font-size:27px}
+  .department h3{font-size:16px}
+  .department p{font-size:12px}
+  .subdepartments{grid-template-columns:1fr;padding-right:10px;margin-right:10px;gap:12px}
+  .subdepartments .department-content{flex-wrap:nowrap}
+  .subdepartments .department-icon{width:55px;height:55px;font-size:23px}
+  .open-btn{width:36px;height:36px}
+  .course-layout{grid-template-columns:1fr}
+  .glass-panel{padding:17px}
+  .page-heading{padding:20px}
+  .page-heading h1{font-size:23px}
+  .info-grid{gap:10px}
+  .info-card{padding:13px}
+  .info-card strong{font-size:12px}
+  .footer{letter-spacing:1px;padding-top:26px}
 }
 </style>
 </head>
@@ -507,179 +371,366 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="app">
 
-  <aside class="sidebar">
-    <div class="brand">
-      <i class="fa-solid fa-graduation-cap"></i>
-      <span>كلية تقنية المعلومات</span>
-    </div>
+<aside class="sidebar">
+  <div class="brand">
+    <i class="fa-solid fa-graduation-cap"></i>
+    <span>كلية تقنية المعلومات</span>
+  </div>
 
-    <nav class="nav">
-      <a href="#home" class="active">
-        <i class="fa-solid fa-house"></i><span>الرئيسية</span>
-      </a>
-      <a href="#departments">
-        <i class="fa-solid fa-grip"></i><span>الأقسام</span>
-      </a>
-      <a href="#my-info">
-        <i class="fa-regular fa-bookmark"></i><span>معلوماتي</span>
-      </a>
-      <a href="#settings">
-        <i class="fa-solid fa-gear"></i><span>الإعدادات</span>
-      </a>
-    </nav>
+  <nav class="nav">
+    <a href="#" id="homeNav" class="active">
+      <i class="fa-solid fa-house"></i><span>الرئيسية</span>
+    </a>
+    <a href="#" id="departmentsNav">
+      <i class="fa-solid fa-grip"></i><span>الأقسام</span>
+    </a>
+  </nav>
 
-    <div class="sidebar-bottom">
-      <button class="logout" id="logoutBtn">
-        <i class="fa-solid fa-right-from-bracket"></i>
-        <span>تسجيل الخروج</span>
-      </button>
-    </div>
-  </aside>
-
-  <main class="main">
-    <header class="topbar">
-      <div class="topbar-title">بوابة كلية تقنية المعلومات</div>
-
-      <div class="topbar-actions">
-        <button type="button" aria-label="الإشعارات">
-          <i class="fa-regular fa-bell"></i>
-        </button>
-
-        <button type="button" id="topLogoutBtn" aria-label="تسجيل الخروج">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </button>
-      </div>
-    </header>
-
-    <div class="content" id="home">
-      <section class="hero">
-        <div class="hero-text">
-          <h1>أهلًا بك ✦</h1>
-          <p>
-            استكشف أقسام كلية تقنية المعلومات<br>
-            وابدأ رحلتك نحو مستقبل مليء بالفرص
-          </p>
-        </div>
-      </section>
-
-      <h2 class="section-heading" id="departments">
-        <i class="fa-solid fa-grip"></i>
-        أقسام الكلية
-      </h2>
-
-      <section class="departments">
-<article class="department general">
-  <div class="department-content">
-    <div class="department-icon">
-      <i class="fa-solid fa-layer-group"></i>
-    </div>
-
-    <div class="department-info">
-      <h3>القسم العام</h3>
-      <p>
-        المقررات الأساسية المشتركة التي تساعد الطالب على بناء
-        معرفته في مجال تقنية المعلومات.
-      </p>
-    </div>
-
-    <button
-      class="open-btn"
-      type="button"
-      data-section="القسم العام"
-      aria-label="دخول القسم العام">
-      <i class="fa-solid fa-arrow-left"></i>
+  <div class="sidebar-bottom">
+    <button class="logout" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span>تسجيل الخروج</span>
     </button>
   </div>
-</article>
-        <article class="department">
-          <div class="department-content">
-            <div class="department-icon">
-              <i class="fa-solid fa-code"></i>
-            </div>
-            <div class="department-info">
-              <h3>هندسة البرمجيات</h3>
-              <p>تصميم وتطوير البرمجيات، إدارة المشاريع وتقنيات هندسة النظم.</p>
-            </div>
-            <button class="open-btn" type="button" data-section="هندسة البرمجيات" aria-label="دخول قسم هندسة البرمجيات">
-              <i class="fa-solid fa-arrow-left"></i>
-            </button>
-          </div>
-        </article>
+</aside>
 
+<main class="main">
+<header class="topbar">
+  <div class="topbar-title">بوابة كلية تقنية المعلومات</div>
+  <div class="topbar-actions">
+    <button type="button" aria-label="الإشعارات">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+    <button type="button" id="topLogoutBtn" aria-label="تسجيل الخروج">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+  </div>
+</header>
+
+<div class="content">
+
+<!-- الصفحة الرئيسية -->
+
+<section id="homeView">
+  <section class="hero">
+    <div class="hero-text">
+      <h1>أهلًا بك ✦</h1>
+      <p>
+        استكشف أقسام كلية تقنية المعلومات<br>
+        وابدأ رحلتك نحو مستقبل مليء بالفرص
+      </p>
+    </div>
+  </section>
+
+  <h2 class="section-heading" id="departments">
+    <i class="fa-solid fa-grip"></i> أقسام الكلية
+  </h2>
+
+  <section class="departments">
+
+    <article class="department">
+      <div class="department-content">
+        <div class="department-icon"><i class="fa-solid fa-layer-group"></i></div>
+        <div class="department-info">
+          <h3>القسم العام</h3>
+          <p>المقررات الأساسية المشتركة التي تساعد الطالب على بناء معرفته في مجال تقنية المعلومات.</p>
+        </div>
+        <button class="open-btn" type="button" data-section="القسم العام" aria-label="دخول القسم العام">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="department">
+      <div class="department-content">
+        <div class="department-icon"><i class="fa-solid fa-code"></i></div>
+        <div class="department-info">
+          <h3>هندسة البرمجيات</h3>
+          <p>تصميم وتطوير البرمجيات، إدارة المشاريع وتقنيات هندسة النظم.</p>
+        </div>
+        <button class="open-btn" type="button" data-section="هندسة البرمجيات">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="department cyan">
+      <div class="department-content">
+        <div class="department-icon"><i class="fa-solid fa-globe"></i></div>
+        <div class="department-info">
+          <h3>الشبكات والاتصالات</h3>
+          <p>تعلّم بنية الشبكات، أنظمة الاتصالات وتقنيات ربط الأجهزة والبيانات.</p>
+        </div>
+        <button class="open-btn" type="button" data-section="الشبكات والاتصالات">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="department computer-science">
+      <div class="cs-header">
+        <div class="department-icon"><i class="fa-solid fa-desktop"></i></div>
+        <div class="department-info">
+          <h3>علوم الحاسوب</h3>
+          <p>دراسة أساسيات الحاسوب، الخوارزميات وقواعد البيانات والأنظمة.</p>
+        </div>
+        <button class="open-btn" type="button" data-section="علوم الحاسوب">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </div>
+
+      <div class="subdepartments">
         <article class="department cyan">
           <div class="department-content">
-            <div class="department-icon">
-              <i class="fa-solid fa-globe"></i>
-            </div>
+            <div class="department-icon"><i class="fa-solid fa-shield-halved"></i></div>
             <div class="department-info">
-              <h3>الشبكات والاتصالات</h3>
-              <p>تعلّم بنية الشبكات، أنظمة الاتصالات وتقنيات ربط الأجهزة والبيانات.</p>
+              <h3>الأمن السيبراني</h3>
+              <p>حماية الأنظمة والبيانات.</p>
             </div>
-            <button class="open-btn" type="button" data-section="الشبكات والاتصالات" aria-label="دخول قسم الشبكات والاتصالات">
+            <button class="open-btn" type="button" data-section="الأمن السيبراني">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
           </div>
         </article>
 
-        <article class="department computer-science">
-          <div class="cs-header">
-            <div class="department-icon">
-              <i class="fa-solid fa-desktop"></i>
-            </div>
+        <article class="department pink">
+          <div class="department-content">
+            <div class="department-icon"><i class="fa-solid fa-brain"></i></div>
             <div class="department-info">
-              <h3>علوم الحاسوب</h3>
-              <p>دراسة أساسيات الحاسوب، الخوارزميات وقواعد البيانات والأنظمة.</p>
+              <h3>الذكاء الاصطناعي</h3>
+              <p>تطوير الأنظمة الذكية وتحليل البيانات.</p>
             </div>
-            <button class="open-btn" type="button" data-section="علوم الحاسوب" aria-label="دخول علوم الحاسوب">
+            <button class="open-btn" type="button" data-section="الذكاء الاصطناعي">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
           </div>
-
-          <div class="subdepartments">
-
-            <article class="department cyan">
-              <div class="department-content">
-                <div class="department-icon">
-                  <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <div class="department-info">
-                  <h3>الأمن السيبراني</h3>
-                  <p>حماية الأنظمة والبيانات من التهديدات والهجمات الإلكترونية.</p>
-                </div>
-                <button class="open-btn" type="button" data-section="الأمن السيبراني" aria-label="دخول الأمن السيبراني">
-                  <i class="fa-solid fa-arrow-left"></i>
-                </button>
-              </div>
-            </article>
-
-            <article class="department pink">
-              <div class="department-content">
-                <div class="department-icon">
-                  <i class="fa-solid fa-brain"></i>
-                </div>
-                <div class="department-info">
-                  <h3>الذكاء الاصطناعي</h3>
-                  <p>تطوير الأنظمة الذكية وتحليل البيانات باستخدام تقنيات التعلم الآلي.</p>
-                </div>
-                <button class="open-btn" type="button" data-section="الذكاء الاصطناعي" aria-label="دخول الذكاء الاصطناعي">
-                  <i class="fa-solid fa-arrow-left"></i>
-                </button>
-              </div>
-            </article>
-
-          </div>
         </article>
+      </div>
+    </article>
 
-      </section>
+  </section>
+</section>
 
-      <footer class="footer">
-        <span>✦</span> &nbsp; Information Technology College &nbsp; <span>✦</span>
-      </footer>
-    </div>
-  </main>
+<!-- صفحة مواد القسم -->
+
+<section id="coursesView">
+
+  <button class="back-btn" id="backHome">
+    <i class="fa-solid fa-arrow-right"></i>
+    العودة إلى الأقسام
+  </button>
+
+  <div class="page-heading">
+    <h1 id="departmentTitle">القسم العام</h1>
+    <p>المقررات الدراسية — الفصل الدراسي الأول</p>
+  </div>
+
+  <div class="course-layout">
+
+    <section class="glass-panel">
+      <h2 class="panel-title">
+        <i class="fa-solid fa-book-open"></i>
+        المواد الدراسية
+      </h2>
+      <div class="course-list" id="courseList"></div>
+    </section>
+
+    <section class="glass-panel details-panel">
+      <div id="courseDetails" class="details-content">
+        <div class="empty-details">
+          <i class="fa-solid fa-book-open"></i>
+          <h3>اختاري مادة دراسية</h3>
+          <p>اضغطي على إحدى المواد لعرض اسم الدكتور<br>ومواعيد المحاضرات ومكانها.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <span>✦</span> &nbsp; Information Technology College &nbsp; <span>✦</span>
+</footer>
+
+</div>
+</main>
 </div>
 
 <script>
+/* بيانات المواد: يمكنك تعديلها من هنا */
+
+const departmentsData = {
+  "القسم العام": [
+    {
+      name: "أساسيات تقنية المعلومات",
+      doctor: "د. مفتاح الدبار",
+      day: "السبت",
+      times: ["9:00 AM"],
+      location: "مدرج الإعمار"
+    },
+    {
+      name: "برمجة 1",
+      doctor: "د. مفتاح الدبار",
+      day: "الاثنين",
+      times: ["1:00 PM"],
+      location: "مدرج الريادة"
+    },
+    {
+      name: "فيزياء عامة",
+      doctor: "د. فتحية العواي",
+      day: "الثلاثاء",
+      times: ["1:00 PM", "3:00 PM"],
+      location: "مدرج الريادة"
+    },
+    {
+      name: "رياضة 1",
+      doctor: "د. انتصار عبدالهادي",
+      day: "الخميس",
+      times: ["1:00 PM", "3:00 PM"],
+      location: "مدرج الإعمار"
+    },
+    {
+      name: "اللغة العربية",
+      doctor: "د. منى الكرامي",
+      day: "السبت",
+      times: ["3:00 PM"],
+      location: "مدرج الإعمار"
+    },
+    {
+      name: "اللغة الإنجليزية",
+      doctor: "د. سمية سليمان",
+      day: "السبت",
+      times: ["1:00 PM"],
+      location: "مدرج الإعمار"
+    }
+  ]
+};
+
+/* عناصر الواجهة */
+
+const homeView = document.getElementById("homeView");
+const coursesView = document.getElementById("coursesView");
+const courseList = document.getElementById("courseList");
+const courseDetails = document.getElementById("courseDetails");
+const departmentTitle = document.getElementById("departmentTitle");
+
+function showHome() {
+  coursesView.style.display = "none";
+  homeView.style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function showDepartment(name) {
+  const courses = departmentsData[name];
+
+  if (!courses) {
+    alert("بيانات هذا القسم لم تُضف بعد.");
+    return;
+  }
+
+  departmentTitle.textContent = name;
+  courseList.innerHTML = "";
+  courseDetails.innerHTML = `
+    <div class="empty-details">
+      <i class="fa-solid fa-book-open"></i>
+      <h3>اختاري مادة دراسية</h3>
+      <p>اضغطي على إحدى المواد لعرض تفاصيلها.</p>
+    </div>
+  `;
+
+  courses.forEach((course,index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "course-item";
+    button.innerHTML = `
+      <span class="course-number">${String(index+1).padStart(2,"0")}</span>
+      <span class="course-name"></span>
+      <i class="fa-solid fa-chevron-left"></i>
+    `;
+    button.querySelector(".course-name").textContent = course.name;
+
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".course-item").forEach(item => {
+        item.classList.remove("selected");
+      });
+      button.classList.add("selected");
+      showCourseDetails(course);
+    });
+
+    courseList.appendChild(button);
+  });
+
+  homeView.style.display = "none";
+  coursesView.style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function showCourseDetails(course) {
+  const timesHTML = course.times.map(time => `
+    <div class="lecture-time">
+      <i class="fa-regular fa-clock"></i>
+      ${time}
+    </div>
+  `).join("");
+
+  courseDetails.innerHTML = `
+    <span class="course-label">تفاصيل المقرر الدراسي</span>
+    <h2 class="details-title"></h2>
+    <p class="details-subtitle">معلومات المحاضر وجدول المحاضرات</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <i class="fa-solid fa-user-tie"></i>
+        <small>اسم الدكتور</small>
+        <strong class="doctor-name"></strong>
+      </div>
+
+      <div class="info-card">
+        <i class="fa-solid fa-calendar-days"></i>
+        <small>يوم المحاضرة</small>
+        <strong class="lecture-day"></strong>
+      </div>
+
+      <div class="info-card">
+        <i class="fa-solid fa-clock"></i>
+        <small>مواعيد المحاضرات</small>
+        <div class="lecture-times">${timesHTML}</div>
+      </div>
+
+      <div class="info-card">
+        <i class="fa-solid fa-location-dot"></i>
+        <small>مكان المحاضرة</small>
+        <strong class="lecture-location"></strong>
+      </div>
+    </div>
+  `;
+
+  courseDetails.querySelector(".details-title").textContent = course.name;
+  courseDetails.querySelector(".doctor-name").textContent = course.doctor;
+  courseDetails.querySelector(".lecture-day").textContent = course.day;
+  courseDetails.querySelector(".lecture-location").textContent = course.location;
+}
+
+document.querySelectorAll("[data-section]").forEach(button => {
+  button.addEventListener("click", () => {
+    showDepartment(button.dataset.section);
+  });
+});
+
+document.getElementById("backHome").addEventListener("click", showHome);
+document.getElementById("homeNav").addEventListener("click", event => {
+  event.preventDefault();
+  showHome();
+});
+
+document.getElementById("departmentsNav").addEventListener("click", event => {
+  event.preventDefault();
+  showHome();
+  document.getElementById("departments").scrollIntoView({behavior:"smooth"});
+});
+
+/* تسجيل الدخول والخروج */
+
 const SUPABASE_URL = "https://wteztoggppyksbdhpoxx.supabase.co";
 const SUPABASE_KEY = "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
 
@@ -687,7 +738,7 @@ const script = document.createElement("script");
 script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 script.onload = initializeDashboard;
 script.onerror = () => {
-  console.error("تعذر تحميل مكتبة Supabase.");
+  alert("تعذر تحميل نظام تسجيل الدخول. تأكدي من اتصال الإنترنت.");
 };
 
 document.head.appendChild(script);
@@ -706,17 +757,15 @@ async function initializeDashboard() {
     }
   );
 
-  const { data, error } = await client.auth.getSession();
+  const {data,error} = await client.auth.getSession();
 
-  // لو المستخدم مش مسجل دخول، يرجعه لصفحة تسجيل الدخول
   if (error || !data.session) {
     window.location.replace("./index.html");
     return;
   }
 
-  // تسجيل الخروج من Supabase
   async function logout() {
-    const { error } = await client.auth.signOut();
+    const {error} = await client.auth.signOut();
 
     if (error) {
       alert("تعذر تسجيل الخروج. حاولي مرة ثانية.");
@@ -726,21 +775,8 @@ async function initializeDashboard() {
     window.location.replace("./index.html");
   }
 
-  document.getElementById("logoutBtn")
-    .addEventListener("click", logout);
-
-  document.getElementById("topLogoutBtn")
-    .addEventListener("click", logout);
-
-  // الأزرار مؤقتة إلى أن نجهز صفحات الأقسام
-  document.querySelectorAll("[data-section]").forEach((button) => {
-    button.addEventListener("click", () => {
-      alert(
-        "اخترتِ: " + button.dataset.section +
-        "\nسنضيف صفحة هذا القسم لاحقًا."
-      );
-    });
-  });
+  document.getElementById("logoutBtn").addEventListener("click",logout);
+  document.getElementById("topLogoutBtn").addEventListener("click",logout);
 }
 </script>
 </body>
