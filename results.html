@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>النتائج الدراسية | كلية تقنية المعلومات</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:#080b19;
+  --panel:rgba(17,22,46,.88);
+  --purple:#9367ff;
+  --cyan:#52efff;
+  --pink:#e879f9;
+  --text:#f4f2ff;
+  --muted:#a7aac5;
+  --border:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Cairo',sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 10% 10%,rgba(147,103,255,.2),transparent 32%),
+    radial-gradient(circle at 90% 85%,rgba(82,239,255,.12),transparent 30%),
+    var(--bg);
+}
+header{
+  padding:22px 5%;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.brand{font-weight:800;font-size:19px}
+.brand span{color:var(--cyan)}
+header a{color:var(--cyan);text-decoration:none;font-size:13px}
+main{width:min(1000px,92%);margin:32px auto 60px}
+h1{font-size:26px;margin:0 0 6px}
+.subtitle{color:var(--muted);margin:0 0 25px;font-size:14px}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:22px;
+  margin-bottom:22px;
+  box-shadow:0 15px 45px rgba(0,0,0,.2);
+  backdrop-filter:blur(15px);
+}
+.panel h2{font-size:18px;margin:0 0 18px;color:var(--cyan)}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+label{font-size:13px;color:#d8d6ef}
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  background:#0c1128;
+  color:white;
+  font-family:inherit;
+  outline:none;
+}
+input:focus,select:focus{border-color:var(--cyan)}
+button{
+  border:0;
+  border-radius:11px;
+  padding:11px 17px;
+  font-family:inherit;
+  font-weight:700;
+  cursor:pointer;
+  color:white;
+  background:linear-gradient(110deg,var(--purple),#6354d9);
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.secondary{background:#27304f}
+button.cyan{background:linear-gradient(110deg,#168da9,#25bfd0);color:#06121c}
+button.danger{background:#873b58}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.status{font-size:13px;color:var(--muted);margin-top:12px;min-height:22px}
+.student-info{
+  color:var(--cyan);
+  font-size:13px;
+  margin-top:8px;
+}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{
+  padding:13px 10px;
+  border-bottom:1px solid var(--border);
+  text-align:right;
+  font-size:13px;
+}
+th{color:var(--cyan);font-weight:700}
+td{color:#eeedfa}
+.published{color:#62e6b0}
+.hidden-result{color:#ffb5c7}
+.empty{text-align:center;color:var(--muted);padding:25px}
+.small-btn{padding:7px 11px;font-size:12px;margin:2px}
+.hidden{display:none!important}
+.notice{
+  background:rgba(82,239,255,.07);
+  border:1px solid rgba(82,239,255,.2);
+  color:#c9faff;
+  border-radius:12px;
+  padding:13px;
+  font-size:13px;
+  margin-bottom:18px;
+}
+@media(max-width:600px){
+  header{padding:17px 4%}
+  .brand{font-size:16px}
+  main{margin-top:24px}
+  h1{font-size:22px}
+  .panel{padding:16px}
+  .grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">⌘ <span>كلية تقنية المعلومات</span></div>
+  <a href="./dashboard.html">العودة إلى لوحة التحكم ←</a>
+</header>
+
+<main>
+  <h1>النتائج الدراسية</h1>
+  <p class="subtitle">بوابة الطالب الإلكترونية · متابعة أعمال الفصل</p>
+
+  <div id="loading" class="panel">جارٍ التحقق من الحساب...</div>
+
+  <!-- واجهة الإدارة -->
+  <section id="adminArea" class="hidden">
+
+    <div class="notice">
+      لوحة الإدارة: يمكنك البحث عن الطالب برقمه الدراسي، ثم إضافة أعمال الفصل ونشر النتيجة.
+    </div>
+
+    <div class="panel">
+      <h2>إضافة أو تعديل نتيجة</h2>
+
+      <div class="grid">
+        <div class="field">
+          <label for="studentNumber">الرقم الدراسي للطالب</label>
+          <input id="studentNumber" placeholder="اكتبي الرقم الدراسي">
+        </div>
+
+        <div class="field" style="justify-content:end">
+          <button type="button" id="findStudent" class="cyan">البحث عن الطالب</button>
+        </div>
+
+        <div class="field full">
+          <div id="studentInfo" class="student-info">لم يتم اختيار طالب بعد.</div>
+        </div>
+
+        <div class="field">
+          <label for="courseName">اسم المادة</label>
+          <input id="courseName" placeholder="مثلاً: برمجة 1">
+        </div>
+
+        <div class="field">
+          <label for="courseworkScore">درجة أعمال الفصل</label>
+          <input id="courseworkScore" type="number" min="0" step="0.01" placeholder="مثلاً: 18">
+        </div>
+
+        <div class="field">
+          <label for="maxScore">الدرجة الكاملة لأعمال الفصل</label>
+          <input id="maxScore" type="number" min="0.01" step="0.01" placeholder="مثلاً: 20">
+        </div>
+
+        <div class="field">
+          <label for="semester">الفصل الدراسي</label>
+          <select id="semester">
+            <option value="الفصل الأول">الفصل الأول</option>
+            <option value="الفصل الثاني">الفصل الثاني</option>
+            <option value="الفصل الصيفي">الفصل الصيفي</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="academicYear">السنة الدراسية</label>
+          <input id="academicYear" placeholder="مثلاً: 2026-2027">
+        </div>
+
+        <div class="field">
+          <label for="publishStatus">حالة النتيجة</label>
+          <select id="publishStatus">
+            <option value="false">غير منشورة</option>
+            <option value="true">منشورة</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="saveResult">حفظ النتيجة</button>
+        <button type="button" id="cancelEdit" class="secondary hidden">إلغاء التعديل</button>
+      </div>
+
+      <div id="formStatus" class="status"></div>
+    </div>
+
+    <div class="panel">
+      <h2>كل النتائج</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الطالب</th>
+              <th>المادة</th>
+              <th>أعمال الفصل</th>
+              <th>الفصل</th>
+              <th>السنة</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="adminResults"></tbody>
+        </table>
+      </div>
+      <div id="adminEmpty" class="empty hidden">لا توجد نتائج مضافة حتى الآن.</div>
+      <div id="adminStatus" class="status"></div>
+    </div>
+  </section>
+
+  <!-- واجهة الطالب -->
+  <section id="studentArea" class="hidden">
+    <div class="panel">
+      <h2>نتائجي</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>المادة</th>
+              <th>أعمال الفصل</th>
+              <th>الدرجة الكاملة</th>
+              <th>الفصل الدراسي</th>
+              <th>السنة الدراسية</th>
+            </tr>
+          </thead>
+          <tbody id="studentResults"></tbody>
+        </table>
+      </div>
+      <div id="studentEmpty" class="empty hidden">لا توجد نتائج منشورة لحسابك حالياً.</div>
+      <div id="studentStatus" class="status"></div>
+    </div>
+  </section>
+
+  <div id="errorArea" class="panel hidden"></div>
+</main>
+
+<script type="module">
+import { createClient } from
+'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+/* بيانات مشروع Supabase */
+const SUPABASE_URL = "https://wteztoggppyksbdhpoxx.supabase.co";
+const SUPABASE_KEY = "sb_publishable_O2crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = id => document.getElementById(id);
+
+let currentUser = null;
+let selectedStudent = null;
+let editingId = null;
+let allResults = [];
+
+function message(id, text) {
+  $(id).textContent = text;
+}
+
+function showError(text) {
+  $('loading').classList.add('hidden');
+  $('errorArea').classList.remove('hidden');
+  $('errorArea').textContent = text;
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[char]);
+}
+
+async function startPage() {
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    const session = sessionData.session;
+
+    if (!session) {
+      location.href = './index.html';
+      return;
+    }
+
+    currentUser = session.user;
+
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    if (roleError) throw roleError;
+
+    $('loading').classList.add('hidden');
+
+    if (roleData?.role === 'admin') {
+      $('adminArea').classList.remove('hidden');
+      await loadAdminResults();
+    } else {
+      $('studentArea').classList.remove('hidden');
+      await loadStudentResults();
+    }
+
+  } catch (error) {
+    showError('تعذر تحميل الصفحة: ' + error.message);
+  }
+}
+
+/* البحث عن الطالب برقمه الدراسي */
+$('findStudent').addEventListener('click', async () => {
+  const number = $('studentNumber').value.trim();
+
+  if (!number) {
+    message('formStatus', 'اكتبي الرقم الدراسي أولاً.');
+    return;
+  }
+
+  message('formStatus', 'جارٍ البحث عن الطالب...');
+  selectedStudent = null;
+
+  try {
+    const { data, error } = await supabase
+      .from('student_profiles')
+      .select('user_id, full_name, student_number')
+      .eq('student_number', number)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!data) {
+      message('studentInfo', 'لم يتم العثور على طالب بهذا الرقم.');
+      message('formStatus', '');
+      return;
+    }
+
+    selectedStudent = data;
+
+    message(
+      'studentInfo',
+      `الطالب: ${data.full_name} | الرقم الدراسي: ${data.student_number}`
+    );
+
+    message('formStatus', 'تم العثور على الطالب بنجاح.');
+
+  } catch (error) {
+    message('formStatus', 'تعذر البحث: ' + error.message);
+  }
+});
+
+/* حفظ نتيجة جديدة أو تحديث نتيجة */
+$('saveResult').addEventListener('click', async () => {
+  if (!selectedStudent) {
+    message('formStatus', 'ابحثي عن الطالب أولاً.');
+    return;
+  }
+
+  const course = $('courseName').value.trim();
+  const score = Number($('courseworkScore').value);
+  const maxScore = Number($('maxScore').value);
+  const year = $('academicYear').value.trim();
+
+  if (!course || !year || $('courseworkScore').value === '' ||
+      $('maxScore').value === '') {
+    message('formStatus', 'يرجى تعبئة جميع الحقول.');
+    return;
+  }
+
+  if (!Number.isFinite(score) || !Number.isFinite(maxScore) ||
+      score < 0 || maxScore <= 0 || score > maxScore) {
+    message('formStatus', 'تأكدي من الدرجات؛ درجة أعمال الفصل لا تتجاوز الدرجة الكاملة.');
+    return;
+  }
+
+  const record = {
+    student_id: selectedStudent.user_id,
+    course_name: course,
+    coursework_score: score,
+    max_coursework_score: maxScore,
+    semester: $('semester').value,
+    academic_year: year,
+    is_published: $('publishStatus').value === 'true',
+    updated_at: new Date().toISOString()
+  };
+
+  $('saveResult').disabled = true;
+  message('formStatus', 'جارٍ حفظ النتيجة...');
+
+  try {
+    let response;
+
+    if (editingId) {
+      response = await supabase
+        .from('student_results')
+        .update(record)
+        .eq('id', editingId);
+    } else {
+      response = await supabase
+        .from('student_results')
+        .insert(record);
+    }
+
+    if (response.error) throw response.error;
+
+    message('formStatus', editingId
+      ? 'تم تعديل النتيجة بنجاح.'
+      : 'تمت إضافة النتيجة بنجاح.');
+
+    resetForm();
+    await loadAdminResults();
+
+  } catch (error) {
+    message('formStatus', 'حدث خطأ أثناء الحفظ: ' + error.message);
+  } finally {
+    $('saveResult').disabled = false;
+  }
+});
+
+/* تحميل نتائج الإدارة */
+async function loadAdminResults() {
+  message('adminStatus', 'جارٍ تحميل النتائج...');
+
+  const { data, error } = await supabase
+    .from('student_results')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    message('adminStatus', 'تعذر تحميل النتائج: ' + error.message);
+    return;
+  }
+
+  allResults = data || [];
+
+  const ids = [...new Set(allResults.map(item => item.student_id))];
+  let profiles = [];
+
+  if (ids.length) {
+    const { data: profileData, error: profileError } = await supabase
+      .from('student_profiles')
+      .select('user_id, full_name, student_number')
+      .in('user_id', ids);
+
+    if (profileError) {
+      message('adminStatus',
+        'تم تحميل النتائج، لكن تعذر تحميل أسماء الطلاب: ' +
+        profileError.message);
+    } else {
+      profiles = profileData || [];
+    }
+  }
+
+  const profileMap = new Map(
+    profiles.map(profile => [profile.user_id, profile])
+  );
+
+  const tbody = $('adminResults');
+  tbody.innerHTML = '';
+
+  $('adminEmpty').classList.toggle('hidden', allResults.length !== 0);
+
+  allResults.forEach(item => {
+    const profile = profileMap.get(item.student_id);
+    const studentName = profile?.full_name || 'طالب غير معروف';
+    const studentNumber = profile?.student_number || '';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHTML(studentName)}<br><small>${escapeHTML(studentNumber)}</small></td>
+      <td>${escapeHTML(item.course_name)}</td>
+      <td>${escapeHTML(item.coursework_score)} / ${escapeHTML(item.max_coursework_score)}</td>
+      <td>${escapeHTML(item.semester)}</td>
+      <td>${escapeHTML(item.academic_year)}</td>
+      <td class="${item.is_published ? 'published' : 'hidden-result'}">
+        ${item.is_published ? 'منشورة' : 'غير منشورة'}
+      </td>
+      <td>
+        <button class="small-btn secondary" data-edit="${escapeHTML(item.id)}">تعديل</button>
+        <button class="small-btn danger" data-delete="${escapeHTML(item.id)}">حذف</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  message('adminStatus', `عدد النتائج: ${allResults.length}`);
+}
+
+/* تعديل نتيجة */
+$('adminResults').addEventListener('click', async event => {
+  const editButton = event.target.closest('[data-edit]');
+  const deleteButton = event.target.closest('[data-delete]');
+
+  if (editButton) {
+    const item = allResults.find(x => x.id === editButton.dataset.edit);
+    if (!item) return;
+
+    editingId = item.id;
+
+    const { data: profile } = await supabase
+      .from('student_profiles')
+      .select('user_id, full_name, student_number')
+      .eq('user_id', item.student_id)
+      .maybeSingle();
+
+    selectedStudent = {
+      user_id: item.student_id,
+      full_name: profile?.full_name || '',
+      student_number: profile?.student_number || ''
+    };
+
+    $('studentNumber').value = profile?.student_number || '';
+    $('studentInfo').textContent =
+      `الطالب: ${selectedStudent.full_name} | الرقم الدراسي: ${selectedStudent.student_number}`;
+
+    $('courseName').value = item.course_name;
+    $('courseworkScore').value = item.coursework_score;
+    $('maxScore').value = item.max_coursework_score;
+    $('semester').value = item.semester;
+    $('academicYear').value = item.academic_year;
+    $('publishStatus').value = String(item.is_published);
+
+    $('saveResult').textContent = 'حفظ التعديلات';
+    $('cancelEdit').classList.remove('hidden');
+    message('formStatus', 'أنتِ تعدّلين نتيجة موجودة.');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (deleteButton) {
+    const confirmed = confirm('هل أنتِ متأكدة من حذف هذه النتيجة؟');
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from('student_results')
+      .delete()
+      .eq('id', deleteButton.dataset.delete);
+
+    if (error) {
+      message('adminStatus', 'تعذر الحذف: ' + error.message);
+      return;
+    }
+
+    message('adminStatus', 'تم حذف النتيجة.');
+    await loadAdminResults();
+  }
+});
+
+/* إلغاء التعديل */
+function resetForm() {
+  editingId = null;
+  selectedStudent = null;
+
+  $('studentNumber').value = '';
+  $('studentInfo').textContent = 'لم يتم اختيار طالب بعد.';
+  $('courseName').value = '';
+  $('courseworkScore').value = '';
+  $('maxScore').value = '';
+  $('academicYear').value = '';
+  $('semester').selectedIndex = 0;
+  $('publishStatus').value = 'false';
+
+  $('saveResult').textContent = 'حفظ النتيجة';
+  $('cancelEdit').classList.add('hidden');
+}
+
+$('cancelEdit').addEventListener('click', () => {
+  resetForm();
+  message('formStatus', 'تم إلغاء التعديل.');
+});
+
+/* تحميل نتائج الطالب المنشورة فقط */
+async function loadStudentResults() {
+  message('studentStatus', 'جارٍ تحميل نتائجك...');
+
+  const { data, error } = await supabase
+    .from('student_results')
+    .select('course_name, coursework_score, max_coursework_score, semester, academic_year')
+    .eq('student_id', currentUser.id)
+    .eq('is_published', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    message('studentStatus', 'تعذر تحميل النتائج: ' + error.message);
+    return;
+  }
+
+  const tbody = $('studentResults');
+  tbody.innerHTML = '';
+
+  $('studentEmpty').classList.toggle('hidden', (data || []).length !== 0);
+
+  (data || []).forEach(item => {
+    const tr = document.createElement('tr');
+
+    [
+      item.course_name,
+      `${item.coursework_score}`,
+      `${item.max_coursework_score}`,
+      item.semester,
+      item.academic_year
+    ].forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = value ?? '';
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  message('studentStatus', `عدد النتائج المنشورة: ${(data || []).length}`);
+}
+
+startPage();
+</script>
+
+</body>
+</html>
