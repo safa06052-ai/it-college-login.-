@@ -271,7 +271,18 @@ import { createClient } from
 const SUPABASE_URL = "https://wteztoggppyksbdhpoxx.supabase.co";
 const SUPABASE_KEY = "sb_publishable_O2crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+ const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      storage: window.sessionStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
 
 const $ = id => document.getElementById(id);
 
