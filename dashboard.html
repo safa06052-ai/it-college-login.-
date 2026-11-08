@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -186,6 +185,57 @@ a{color:inherit;text-decoration:none}
 .subdepartments .department h3{font-size:16px}
 .subdepartments .department p{font-size:12px}
 
+/* واجهة اختيار الفصل */
+
+#semesterView{display:none}
+
+.semester-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;
+}
+
+.semester-card{
+  padding:28px;
+  border:1px solid var(--purple);
+  border-radius:19px;
+  background:linear-gradient(135deg,rgba(35,27,75,.78),rgba(12,20,48,.76));
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:inset 0 0 25px rgba(147,103,255,.08),0 8px 30px #05051e40;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  cursor:pointer;
+  transition:.3s;
+  color:var(--text);
+  text-align:right;
+  width:100%;
+}
+
+.semester-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--cyan);
+  box-shadow:0 8px 30px #4d40ff30;
+}
+
+.semester-icon{
+  width:75px;height:75px;flex-shrink:0;
+  display:grid;place-items:center;
+  border-radius:20px;color:var(--cyan);
+  background:linear-gradient(145deg,#004c82,#121846);
+  font-size:30px;
+}
+
+.semester-card:nth-child(2) .semester-icon{
+  color:var(--pink);
+  background:linear-gradient(145deg,#51155f,#121846);
+}
+
+.semester-info{flex:1}
+.semester-info h3{color:#e3eaff;font-size:19px;margin-bottom:7px}
+.semester-info p{color:var(--muted);font-size:12px;line-height:2}
+
 /* واجهة المواد */
 
 #coursesView{display:none}
@@ -356,6 +406,9 @@ a{color:inherit;text-decoration:none}
   .subdepartments .department-content{flex-wrap:nowrap}
   .subdepartments .department-icon{width:55px;height:55px;font-size:23px}
   .open-btn{width:36px;height:36px}
+  .semester-grid{grid-template-columns:1fr;gap:13px}
+  .semester-card{padding:19px}
+  .semester-icon{width:62px;height:62px;font-size:25px}
   .course-layout{grid-template-columns:1fr}
   .glass-panel{padding:17px}
   .page-heading{padding:20px}
@@ -397,10 +450,11 @@ a{color:inherit;text-decoration:none}
       <i class="fa-solid fa-bullhorn"></i>
       <span>الإعلانات والتنبيهات</span>
     </a>
-<a href="./results.html" id="resultsNav">
-  <i class="fa-solid fa-graduation-cap"></i>
-  <span>النتائج الدراسية</span>
-</a>
+
+    <a href="./results.html" id="resultsNav">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>النتائج الدراسية</span>
+    </a>
   </nav>
 
   <div class="sidebar-bottom">
@@ -412,12 +466,14 @@ a{color:inherit;text-decoration:none}
 </aside>
 
 <main class="main">
+
 <header class="topbar">
   <div class="topbar-title">بوابة كلية تقنية المعلومات</div>
+
   <div class="topbar-actions">
     <button type="button"
-            aria-label="الإعلانات والتنبيهات"
-            onclick="window.location.href='./announcements.html'">
+      aria-label="الإعلانات والتنبيهات"
+      onclick="window.location.href='./announcements.html'">
       <i class="fa-regular fa-bell"></i>
     </button>
 
@@ -432,6 +488,7 @@ a{color:inherit;text-decoration:none}
 <!-- الصفحة الرئيسية -->
 
 <section id="homeView">
+
   <section class="hero">
     <div class="hero-text">
       <h1>أهلًا بك ✦</h1>
@@ -500,6 +557,7 @@ a{color:inherit;text-decoration:none}
       </div>
 
       <div class="subdepartments">
+
         <article class="department cyan">
           <div class="department-content">
             <div class="department-icon"><i class="fa-solid fa-shield-halved"></i></div>
@@ -525,11 +583,59 @@ a{color:inherit;text-decoration:none}
             </button>
           </div>
         </article>
+
       </div>
     </article>
 
   </section>
 </section>
+
+
+<!-- واجهة اختيار الفصل -->
+
+<section id="semesterView">
+
+  <button class="back-btn" id="backSemestersHome">
+    <i class="fa-solid fa-arrow-right"></i>
+    العودة إلى الأقسام
+  </button>
+
+  <div class="page-heading">
+    <h1>القسم العام</h1>
+    <p>اختاري الفصل الدراسي لعرض المواد المقررة</p>
+  </div>
+
+  <div class="semester-grid">
+
+    <button class="semester-card" type="button" data-semester="first">
+      <div class="semester-icon">
+        <i class="fa-solid fa-book-open"></i>
+      </div>
+
+      <div class="semester-info">
+        <h3>الفصل الأول</h3>
+        <p>عرض مواد الفصل الدراسي الأول</p>
+      </div>
+
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <button class="semester-card" type="button" data-semester="second">
+      <div class="semester-icon">
+        <i class="fa-solid fa-book-open"></i>
+      </div>
+
+      <div class="semester-info">
+        <h3>الفصل الثاني</h3>
+        <p>عرض مواد الفصل الدراسي الثاني</p>
+      </div>
+
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+  </div>
+</section>
+
 
 <!-- صفحة مواد القسم -->
 
@@ -537,12 +643,12 @@ a{color:inherit;text-decoration:none}
 
   <button class="back-btn" id="backHome">
     <i class="fa-solid fa-arrow-right"></i>
-    العودة إلى الأقسام
+    العودة إلى الفصول
   </button>
 
   <div class="page-heading">
     <h1 id="departmentTitle">القسم العام</h1>
-    <p>المقررات الدراسية — الفصل الدراسي الأول</p>
+    <p id="semesterSubtitle">المقررات الدراسية — الفصل الدراسي الأول</p>
   </div>
 
   <div class="course-layout">
@@ -552,6 +658,7 @@ a{color:inherit;text-decoration:none}
         <i class="fa-solid fa-book-open"></i>
         المواد الدراسية
       </h2>
+
       <div class="course-list" id="courseList"></div>
     </section>
 
@@ -568,6 +675,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
+
 <footer class="footer">
   <span>✦</span> &nbsp; Information Technology College &nbsp; <span>✦</span>
 </footer>
@@ -576,80 +684,169 @@ a{color:inherit;text-decoration:none}
 </main>
 </div>
 
-<script>
-/* بيانات المواد: يمكنك تعديلها من هنا */
 
-const departmentsData = {
-  "القسم العام": [
-    {
-      name: "أساسيات تقنية المعلومات",
-      doctor: "د. مفتاح الدبار",
-      day: "السبت",
-      times: ["9:00 AM"],
-      location: "مدرج الإعمار"
-    },
-    {
-      name: "برمجة 1",
-      doctor: "د. مفتاح الدبار",
-      day: "الاثنين",
-      times: ["1:00 PM"],
-      location: "مدرج الريادة"
-    },
-    {
-      name: "فيزياء عامة",
-      doctor: "د. فتحية العواي",
-      day: "الثلاثاء",
-      times: ["1:00 PM", "3:00 PM"],
-      location: "مدرج الريادة"
-    },
-    {
-      name: "رياضة 1",
-      doctor: "د. انتصار عبدالهادي",
-      day: "الخميس",
-      times: ["1:00 PM", "3:00 PM"],
-      location: "مدرج الإعمار"
-    },
-    {
-      name: "اللغة العربية",
-      doctor: "د. منى الكرامي",
-      day: "السبت",
-      times: ["3:00 PM"],
-      location: "مدرج الإعمار"
-    },
-    {
-      name: "اللغة الإنجليزية",
-      doctor: "د. سمية سليمان",
-      day: "السبت",
-      times: ["1:00 PM"],
-      location: "مدرج الإعمار"
-    }
-  ]
-};
+<script>
+
+/* بيانات مواد الفصل الأول */
+
+const firstSemester = [
+
+  {
+    name: "أساسيات تقنية المعلومات",
+    doctor: "د. مفتاح الدبار",
+    day: "السبت",
+    times: ["9:00 AM"],
+    location: "مدرج الإعمار"
+  },
+
+  {
+    name: "برمجة 1",
+    doctor: "د. مفتاح الدبار",
+    day: "الاثنين",
+    times: ["1:00 PM"],
+    location: "مدرج الريادة"
+  },
+
+  {
+    name: "فيزياء عامة",
+    doctor: "د. فتحية العواي",
+    day: "الثلاثاء",
+    times: ["1:00 PM", "3:00 PM"],
+    location: "مدرج الريادة"
+  },
+
+  {
+    name: "رياضة 1",
+    doctor: "د. انتصار عبدالهادي",
+    day: "الخميس",
+    times: ["1:00 PM", "3:00 PM"],
+    location: "مدرج الإعمار"
+  },
+
+  {
+    name: "اللغة العربية",
+    doctor: "د. منى الكرامي",
+    day: "السبت",
+    times: ["3:00 PM"],
+    location: "مدرج الإعمار"
+  },
+
+  {
+    name: "اللغة الإنجليزية",
+    doctor: "د. سمية سليمان",
+    day: "السبت",
+    times: ["1:00 PM"],
+    location: "مدرج الإعمار"
+  }
+
+];
+
+
+/* بيانات مواد الفصل الثاني */
+
+const secondSemester = [
+
+  { name: "رياضة 2" },
+
+  { name: "برمجة 2" },
+
+  { name: "ثقافة وطنية" },
+
+  { name: "إحصاء" },
+
+  { name: "برمجة نت" },
+
+  { name: "إنجليزي تقنية" }
+
+];
+
 
 /* عناصر الواجهة */
 
 const homeView = document.getElementById("homeView");
+const semesterView = document.getElementById("semesterView");
 const coursesView = document.getElementById("coursesView");
+
 const courseList = document.getElementById("courseList");
 const courseDetails = document.getElementById("courseDetails");
+
 const departmentTitle = document.getElementById("departmentTitle");
+const semesterSubtitle = document.getElementById("semesterSubtitle");
+
+const backHome = document.getElementById("backHome");
+
+let currentDepartment = "";
+let currentSemester = "";
+let currentCourses = [];
+
+
+/* إظهار الصفحة الرئيسية */
 
 function showHome() {
-  coursesView.style.display = "none";
+
   homeView.style.display = "block";
+  semesterView.style.display = "none";
+  coursesView.style.display = "none";
+
   window.scrollTo({top:0,behavior:"smooth"});
+
 }
 
-function showDepartment(name) {
-  const courses = departmentsData[name];
 
-  if (!courses) {
-    alert("بيانات هذا القسم لم تُضف بعد.");
+/* إظهار اختيار الفصل */
+
+function showSemesters() {
+
+  homeView.style.display = "none";
+  semesterView.style.display = "block";
+  coursesView.style.display = "none";
+
+  window.scrollTo({top:0,behavior:"smooth"});
+
+}
+
+
+/* دخول القسم */
+
+function showDepartment(name) {
+
+  if (name === "القسم العام") {
+
+    currentDepartment = name;
+    showSemesters();
     return;
+
   }
 
-  departmentTitle.textContent = name;
+  alert("بيانات هذا القسم لم تُضف بعد.");
+
+}
+
+
+/* اختيار الفصل الدراسي */
+
+function showSemester(semester) {
+
+  currentSemester = semester;
+
+  if (semester === "first") {
+
+    currentCourses = firstSemester;
+    semesterSubtitle.textContent =
+      "المقررات الدراسية — الفصل الدراسي الأول";
+
+  } else {
+
+    currentCourses = secondSemester;
+    semesterSubtitle.textContent =
+      "المقررات الدراسية — الفصل الدراسي الثاني";
+
+  }
+
+  departmentTitle.textContent = "القسم العام";
+
   courseList.innerHTML = "";
+
   courseDetails.innerHTML = `
     <div class="empty-details">
       <i class="fa-solid fa-book-open"></i>
@@ -658,34 +855,84 @@ function showDepartment(name) {
     </div>
   `;
 
-  courses.forEach((course,index) => {
+  currentCourses.forEach((course,index) => {
+
     const button = document.createElement("button");
+
     button.type = "button";
     button.className = "course-item";
+
     button.innerHTML = `
-      <span class="course-number">${String(index+1).padStart(2,"0")}</span>
+      <span class="course-number">
+        ${String(index+1).padStart(2,"0")}
+      </span>
+
       <span class="course-name"></span>
+
       <i class="fa-solid fa-chevron-left"></i>
     `;
-    button.querySelector(".course-name").textContent = course.name;
+
+    button.querySelector(".course-name").textContent =
+      course.name;
 
     button.addEventListener("click", () => {
+
       document.querySelectorAll(".course-item").forEach(item => {
         item.classList.remove("selected");
       });
+
       button.classList.add("selected");
+
       showCourseDetails(course);
+
     });
 
     courseList.appendChild(button);
+
   });
 
+  semesterView.style.display = "none";
   homeView.style.display = "none";
   coursesView.style.display = "block";
+
   window.scrollTo({top:0,behavior:"smooth"});
+
 }
 
+
+/* عرض تفاصيل المادة */
+
 function showCourseDetails(course) {
+
+  /* المواد التي لم تضاف معلوماتها بعد */
+
+  if (
+    !course.doctor &&
+    !course.day &&
+    !course.times &&
+    !course.location
+  ) {
+
+    courseDetails.innerHTML = `
+      <div class="empty-details">
+        <i class="fa-solid fa-book-open"></i>
+
+        <h3 class="details-title"></h3>
+
+        <p>
+          سيتم إضافة تفاصيل هذا المقرر لاحقاً.
+        </p>
+      </div>
+    `;
+
+    courseDetails.querySelector(".details-title").textContent =
+      course.name;
+
+    return;
+
+  }
+
+
   const timesHTML = course.times.map(time => `
     <div class="lecture-time">
       <i class="fa-regular fa-clock"></i>
@@ -693,12 +940,21 @@ function showCourseDetails(course) {
     </div>
   `).join("");
 
+
   courseDetails.innerHTML = `
-    <span class="course-label">تفاصيل المقرر الدراسي</span>
+
+    <span class="course-label">
+      تفاصيل المقرر الدراسي
+    </span>
+
     <h2 class="details-title"></h2>
-    <p class="details-subtitle">معلومات المحاضر وجدول المحاضرات</p>
+
+    <p class="details-subtitle">
+      معلومات المحاضر وجدول المحاضرات
+    </p>
 
     <div class="info-grid">
+
       <div class="info-card">
         <i class="fa-solid fa-user-tie"></i>
         <small>اسم الدكتور</small>
@@ -722,52 +978,130 @@ function showCourseDetails(course) {
         <small>مكان المحاضرة</small>
         <strong class="lecture-location"></strong>
       </div>
+
     </div>
+
   `;
 
-  courseDetails.querySelector(".details-title").textContent = course.name;
-  courseDetails.querySelector(".doctor-name").textContent = course.doctor;
-  courseDetails.querySelector(".lecture-day").textContent = course.day;
-  courseDetails.querySelector(".lecture-location").textContent = course.location;
+  courseDetails.querySelector(".details-title").textContent =
+    course.name;
+
+  courseDetails.querySelector(".doctor-name").textContent =
+    course.doctor;
+
+  courseDetails.querySelector(".lecture-day").textContent =
+    course.day;
+
+  courseDetails.querySelector(".lecture-location").textContent =
+    course.location;
+
 }
 
+
+/* أزرار دخول الأقسام */
+
 document.querySelectorAll("[data-section]").forEach(button => {
+
   button.addEventListener("click", () => {
+
     showDepartment(button.dataset.section);
+
   });
+
 });
 
-document.getElementById("backHome").addEventListener("click", showHome);
 
-document.getElementById("homeNav").addEventListener("click", event => {
+/* أزرار اختيار الفصل */
+
+document.querySelectorAll("[data-semester]").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    showSemester(button.dataset.semester);
+
+  });
+
+});
+
+
+/* الرجوع من المواد إلى الفصول */
+
+backHome.addEventListener("click", () => {
+
+  if (currentDepartment === "القسم العام") {
+
+    showSemesters();
+
+  } else {
+
+    showHome();
+
+  }
+
+});
+
+
+/* الرجوع من الفصول إلى الأقسام */
+
+document.getElementById("backSemestersHome")
+.addEventListener("click",showHome);
+
+
+/* القائمة الجانبية */
+
+document.getElementById("homeNav").addEventListener("click",event => {
+
   event.preventDefault();
   showHome();
+
 });
 
-document.getElementById("departmentsNav").addEventListener("click", event => {
+
+document.getElementById("departmentsNav").addEventListener("click",event => {
+
   event.preventDefault();
+
   showHome();
-  document.getElementById("departments").scrollIntoView({behavior:"smooth"});
+
+  document.getElementById("departments")
+    .scrollIntoView({behavior:"smooth"});
+
 });
+
 
 /* تسجيل الدخول والخروج */
 
-const SUPABASE_URL = "https://wteztoggppyksbdhpoxx.supabase.co";
-const SUPABASE_KEY = "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
+const SUPABASE_URL =
+  "https://wteztoggppyksbdhpoxx.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
+
 
 const script = document.createElement("script");
-script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+script.src =
+  "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
 script.onload = initializeDashboard;
+
 script.onerror = () => {
+
   alert("تعذر تحميل نظام تسجيل الدخول. تأكدي من اتصال الإنترنت.");
+
 };
 
 document.head.appendChild(script);
 
+
 async function initializeDashboard() {
+
   const client = supabase.createClient(
+
     SUPABASE_URL,
+
     SUPABASE_KEY,
+
     {
       auth: {
         storage: window.sessionStorage,
@@ -776,29 +1110,46 @@ async function initializeDashboard() {
         detectSessionInUrl: true
       }
     }
+
   );
+
 
   const {data,error} = await client.auth.getSession();
 
+
   if (error || !data.session) {
+
     window.location.replace("./index.html");
     return;
+
   }
 
+
   async function logout() {
+
     const {error} = await client.auth.signOut();
 
     if (error) {
+
       alert("تعذر تسجيل الخروج. حاولي مرة ثانية.");
       return;
+
     }
 
     window.location.replace("./index.html");
+
   }
 
-  document.getElementById("logoutBtn").addEventListener("click",logout);
-  document.getElementById("topLogoutBtn").addEventListener("click",logout);
+
+  document.getElementById("logoutBtn")
+    .addEventListener("click",logout);
+
+  document.getElementById("topLogoutBtn")
+    .addEventListener("click",logout);
+
 }
+
 </script>
+
 </body>
 </html>
