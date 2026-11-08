@@ -1,0 +1,501 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b19">
+<title>إدارة المناهج الدراسية</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --bg:#080b19;
+  --purple:#9367ff;
+  --cyan:#52efff;
+  --pink:#e879f9;
+  --text:#f1f0ff;
+  --muted:#b7b9df;
+  --border:rgba(147,103,255,.35);
+  --panel:rgba(17,22,46,.82);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Cairo',sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  padding:22px;
+  background:
+    radial-gradient(ellipse at 85% 10%,#49258a66,transparent 40%),
+    radial-gradient(ellipse at 10% 85%,#153b8066,transparent 38%),
+    var(--bg);
+}
+button,input,select{font:inherit}
+.container{max-width:1000px;margin:auto}
+.header{
+  padding:25px;
+  border:1px solid #3459ff;
+  border-radius:20px;
+  background:linear-gradient(90deg,rgba(5,12,43,.96),rgba(13,24,72,.72));
+  margin-bottom:25px;
+}
+.header h1{color:#e4eaff;font-size:27px}
+.header p{color:#b5ccff;font-size:13px;margin-top:8px;line-height:2}
+.panel{
+  padding:25px;
+  border:1px solid var(--border);
+  border-radius:20px;
+  background:var(--panel);
+  backdrop-filter:blur(18px);
+  box-shadow:inset 0 0 30px #9367ff0d,0 10px 35px #0003;
+  margin-bottom:22px;
+}
+.panel-title{
+  display:flex;align-items:center;gap:12px;
+  color:#c7b8ff;font-size:19px;margin-bottom:20px;
+}
+.panel-title i{color:var(--cyan)}
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.field{display:grid;gap:8px}
+.field.full{grid-column:1/-1}
+label{color:#c9c5f0;font-size:13px}
+input,select{
+  width:100%;
+  padding:13px;
+  border-radius:12px;
+  border:1px solid #6654a8;
+  background:#111832;
+  color:white;
+  outline:none;
+}
+input:focus,select:focus{border-color:var(--cyan)}
+input[type=file]{font-size:12px}
+input::placeholder{color:#8790b8}
+select option{background:#111832;color:white}
+.hint{font-size:11px;color:#9da9d0;line-height:1.8}
+.primary-btn{
+  width:100%;padding:14px;
+  border:1px solid var(--purple);
+  border-radius:13px;
+  color:white;
+  background:linear-gradient(110deg,#25228b,#5426bd);
+  cursor:pointer;
+  transition:.2s;
+  margin-top:18px;
+  font-weight:700;
+}
+.primary-btn:hover{box-shadow:0 0 20px #9367ff55}
+.primary-btn:disabled{opacity:.5;cursor:not-allowed}
+.message{
+  display:none;
+  padding:12px;
+  border-radius:11px;
+  margin-top:15px;
+  font-size:13px;
+  line-height:1.8;
+}
+.message.success{display:block;background:#123b35;color:#9dffe0;border:1px solid #2d987b}
+.message.error{display:block;background:#421e35;color:#ffc1d8;border:1px solid #a74773}
+.material-list{display:grid;gap:12px}
+.material-item{
+  display:flex;align-items:center;gap:13px;
+  padding:15px;border-radius:13px;
+  border:1px solid #ffffff15;
+  background:linear-gradient(110deg,#171b3b,#111832);
+}
+.pdf-icon{
+  width:46px;height:46px;flex-shrink:0;
+  display:grid;place-items:center;
+  border-radius:12px;
+  background:#511d55;color:var(--pink);
+  font-size:21px;
+}
+.material-info{flex:1;min-width:0}
+.material-info strong{display:block;color:#eeeaff;font-size:13px;overflow-wrap:anywhere}
+.material-info small{display:block;color:#9da9d0;font-size:11px;margin-top:4px;line-height:1.8}
+.delete-btn{
+  border:1px solid #a74773;
+  background:#421e35;color:#ffc1d8;
+  border-radius:10px;padding:9px 12px;
+  cursor:pointer;font-size:12px;
+}
+.empty{
+  text-align:center;padding:30px;color:#9da9d0;
+  line-height:2;font-size:13px;
+}
+.empty i{display:block;font-size:35px;color:#8065d8;margin-bottom:12px}
+.back{
+  display:inline-flex;align-items:center;gap:9px;
+  color:#c9b8ff;margin-bottom:18px;font-size:13px;
+}
+@media(max-width:600px){
+  body{padding:13px}
+  .panel{padding:17px}
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .header h1{font-size:22px}
+  .material-item{align-items:flex-start;flex-wrap:wrap}
+  .delete-btn{margin-right:auto}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<a class="back" href="./dashboard.html">
+  <i class="fa-solid fa-arrow-right"></i>
+  العودة إلى البوابة
+</a>
+
+<header class="header">
+  <h1><i class="fa-solid fa-book-open"></i> إدارة المناهج الدراسية</h1>
+  <p>إضافة وإدارة ملفات المناهج الدراسية الخاصة بأقسام كلية تقنية المعلومات.</p>
+</header>
+
+<section class="panel">
+  <h2 class="panel-title">
+    <i class="fa-solid fa-cloud-arrow-up"></i>
+    إضافة منهج دراسي جديد
+  </h2>
+
+  <form id="uploadForm">
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="department">القسم</label>
+        <select id="department" required>
+          <option value="">اختاري القسم</option>
+          <option value="القسم العام">القسم العام</option>
+          <option value="هندسة البرمجيات">هندسة البرمجيات</option>
+          <option value="الشبكات والاتصالات">الشبكات والاتصالات</option>
+          <option value="علوم الحاسوب">علوم الحاسوب</option>
+          <option value="الأمن السيبراني">الأمن السيبراني</option>
+          <option value="الذكاء الاصطناعي">الذكاء الاصطناعي</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="semester">الفصل الدراسي</label>
+        <select id="semester" required>
+          <option value="">اختاري الفصل</option>
+          <option value="الفصل الأول">الفصل الأول</option>
+          <option value="الفصل الثاني">الفصل الثاني</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label for="courseName">اسم المادة</label>
+        <input id="courseName" type="text" placeholder="مثلاً: برمجة 1" required>
+      </div>
+
+      <div class="field full">
+        <label for="fileTitle">اسم المنهج أو الملف</label>
+        <input id="fileTitle" type="text" placeholder="مثلاً: المحاضرة الأولى - مقدمة في البرمجة" required>
+      </div>
+
+      <div class="field full">
+        <label for="pdfFile">اختيار ملف PDF</label>
+        <input id="pdfFile" type="file" accept=".pdf,application/pdf" required>
+        <span class="hint">الملفات بصيغة PDF فقط، والحد الأقصى لحجم الملف 20 ميجابايت.</span>
+      </div>
+
+    </div>
+
+    <button class="primary-btn" id="uploadBtn" type="submit">
+      <i class="fa-solid fa-upload"></i>
+      رفع المنهج
+    </button>
+
+    <div id="uploadMessage" class="message"></div>
+  </form>
+</section>
+
+<section class="panel">
+  <h2 class="panel-title">
+    <i class="fa-solid fa-folder-open"></i>
+    الملفات المرفوعة
+  </h2>
+
+  <div id="materialsList" class="material-list">
+    <div class="empty">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      جاري تحميل المناهج...
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL =
+  "https://wteztoggppyksbdhpoxx.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
+
+const client = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      storage:window.sessionStorage,
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  }
+);
+
+const form = document.getElementById("uploadForm");
+const uploadBtn = document.getElementById("uploadBtn");
+const uploadMessage = document.getElementById("uploadMessage");
+const materialsList = document.getElementById("materialsList");
+
+let currentUser = null;
+
+function showMessage(message,type){
+  uploadMessage.textContent = message;
+  uploadMessage.className = "message " + type;
+}
+
+async function initialize(){
+
+  const {data,error} = await client.auth.getSession();
+
+  if(error || !data.session){
+    window.location.replace("./index.html");
+    return;
+  }
+
+  currentUser = data.session.user;
+
+  const {data:roleData,error:roleError} = await client
+    .from("user_roles")
+    .select("role")
+    .eq("user_id",currentUser.id)
+    .maybeSingle();
+
+  if(roleError){
+    alert("تعذر التحقق من صلاحيات الحساب.");
+    window.location.replace("./dashboard.html");
+    return;
+  }
+
+  if(!roleData || roleData.role !== "admin"){
+    alert("هذه الصفحة مخصصة للمشرف فقط.");
+    window.location.replace("./dashboard.html");
+    return;
+  }
+
+  await loadMaterials();
+}
+
+form.addEventListener("submit",async function(event){
+
+  event.preventDefault();
+
+  const department = document.getElementById("department").value;
+  const semester = document.getElementById("semester").value;
+  const courseName = document.getElementById("courseName").value.trim();
+  const fileTitle = document.getElementById("fileTitle").value.trim();
+  const file = document.getElementById("pdfFile").files[0];
+
+  if(!file){
+    showMessage("اختاري ملف PDF أولاً.","error");
+    return;
+  }
+
+  if(file.type !== "application/pdf" &&
+     !file.name.toLowerCase().endsWith(".pdf")){
+    showMessage("يسمح برفع ملفات PDF فقط.","error");
+    return;
+  }
+
+  if(file.size > 20 * 1024 * 1024){
+    showMessage("حجم الملف أكبر من 20 ميجابايت.","error");
+    return;
+  }
+
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع...';
+
+  let storagePath = null;
+
+  try{
+
+    storagePath = currentUser.id + "/" +
+      crypto.randomUUID() + ".pdf";
+
+    const {error:storageError} = await client.storage
+      .from("course-materials")
+      .upload(storagePath,file,{
+        contentType:"application/pdf",
+        upsert:false
+      });
+
+    if(storageError) throw storageError;
+
+    const {error:dbError} = await client
+      .from("course_materials")
+      .insert({
+        department:department,
+        semester:semester,
+        course_name:courseName,
+        file_name:fileTitle,
+        storage_path:storagePath,
+        uploaded_by:currentUser.id
+      });
+
+    if(dbError){
+      await client.storage
+        .from("course-materials")
+        .remove([storagePath]);
+
+      throw dbError;
+    }
+
+    showMessage("تم رفع المنهج بنجاح.","success");
+    form.reset();
+    await loadMaterials();
+
+  }catch(error){
+
+    console.error(error);
+    showMessage("تعذر رفع الملف: " + error.message,"error");
+
+  }finally{
+
+    uploadBtn.disabled = false;
+    uploadBtn.innerHTML = '<i class="fa-solid fa-upload"></i> رفع المنهج';
+
+  }
+
+});
+
+
+async function loadMaterials(){
+
+  materialsList.innerHTML = `
+    <div class="empty">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      جاري تحميل الملفات...
+    </div>
+  `;
+
+  const {data,error} = await client
+    .from("course_materials")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  if(error){
+    materialsList.innerHTML =
+      '<div class="empty">تعذر تحميل الملفات.</div>';
+    console.error(error);
+    return;
+  }
+
+  if(!data || data.length === 0){
+    materialsList.innerHTML = `
+      <div class="empty">
+        <i class="fa-solid fa-folder-open"></i>
+        لا توجد مناهج مرفوعة حتى الآن.
+      </div>
+    `;
+    return;
+  }
+
+  materialsList.innerHTML = "";
+
+  data.forEach(material=>{
+
+    const item = document.createElement("div");
+    item.className = "material-item";
+
+    const icon = document.createElement("div");
+    icon.className = "pdf-icon";
+    icon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+
+    const info = document.createElement("div");
+    info.className = "material-info";
+
+    const title = document.createElement("strong");
+    title.textContent = material.file_name;
+
+    const details = document.createElement("small");
+    details.textContent =
+      material.department + " — " +
+      material.semester + " — " +
+      material.course_name;
+
+    info.append(title,details);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.type = "button";
+    deleteBtn.innerHTML =
+      '<i class="fa-solid fa-trash"></i> حذف';
+
+    deleteBtn.addEventListener("click",()=>{
+      deleteMaterial(material,deleteBtn);
+    });
+
+    item.append(icon,info,deleteBtn);
+    materialsList.appendChild(item);
+
+  });
+
+}
+
+
+async function deleteMaterial(material,button){
+
+  const confirmed = confirm(
+    "هل أنت متأكد من حذف هذا المنهج؟"
+  );
+
+  if(!confirmed) return;
+
+  button.disabled = true;
+
+  try{
+
+    const {error:storageError} = await client.storage
+      .from("course-materials")
+      .remove([material.storage_path]);
+
+    if(storageError) throw storageError;
+
+    const {error:dbError} = await client
+      .from("course_materials")
+      .delete()
+      .eq("id",material.id);
+
+    if(dbError){
+      throw dbError;
+    }
+
+    await loadMaterials();
+
+  }catch(error){
+
+    console.error(error);
+    alert("تعذر حذف الملف: " + error.message);
+    button.disabled = false;
+
+  }
+
+}
+
+initialize();
+</script>
+</body>
+</html>
