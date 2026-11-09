@@ -78,6 +78,7 @@ input:focus,select:focus{border-color:var(--cyan)}
 input[type=file]{font-size:12px}
 input::placeholder{color:#8790b8}
 select option{background:#111832;color:white}
+select:disabled{opacity:.6;cursor:not-allowed}
 .hint{font-size:11px;color:#9da9d0;line-height:1.8}
 .primary-btn{
   width:100%;padding:14px;
@@ -191,8 +192,13 @@ select option{background:#111832;color:white}
       </div>
 
       <div class="field full">
-        <label for="courseName">اسم المادة</label>
-        <input id="courseName" type="text" placeholder="مثلاً: برمجة 1" required>
+        <label for="courseName">المادة الدراسية</label>
+        <select id="courseName" required disabled>
+          <option value="">تحديد المادة</option>
+        </select>
+        <span class="hint" id="courseHint">
+          يرجى تحديد القسم والفصل الدراسي لعرض المواد.
+        </span>
       </div>
 
       <div class="field full">
@@ -233,6 +239,10 @@ select option{background:#111832;color:white}
 
 </div>
 
+<!-- تحميل قائمة المواد -->
+<script src="./courses.js"></script>
+
+<!-- تحميل Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -260,7 +270,66 @@ const uploadBtn = document.getElementById("uploadBtn");
 const uploadMessage = document.getElementById("uploadMessage");
 const materialsList = document.getElementById("materialsList");
 
+const departmentSelect = document.getElementById("department");
+const semesterSelect = document.getElementById("semester");
+const courseSelect = document.getElementById("courseName");
+const courseHint = document.getElementById("courseHint");
+
 let currentUser = null;
+
+/* تحميل المواد تلقائياً من courses.js */
+function updateCourseOptions(){
+
+  const department = departmentSelect.value;
+  const semester = semesterSelect.value;
+
+  courseSelect.innerHTML =
+    '<option value="">تحديد المادة</option>';
+
+  courseSelect.disabled = true;
+
+  if(!department || !semester){
+    courseHint.textContent =
+      "يرجى تحديد القسم والفصل الدراسي لعرض المواد.";
+    return;
+  }
+
+  if(department !== "القسم العام"){
+    courseHint.textContent =
+      "قائمة المواد متاحة حاليًا للقسم العام فقط.";
+    return;
+  }
+
+  const semesterKey =
+    semester === "الفصل الأول" ? "first" : "second";
+
+  const courses =
+    window.COLLEGE_COURSES?.[department]?.[semesterKey] || [];
+
+  if(courses.length === 0){
+    courseHint.textContent =
+      "لا توجد مواد مسجلة لهذا الفصل في ملف courses.js.";
+    return;
+  }
+
+  courses.forEach(course => {
+
+    const option = document.createElement("option");
+    option.value = course.name;
+    option.textContent = course.name;
+
+    courseSelect.appendChild(option);
+
+  });
+
+  courseSelect.disabled = false;
+
+  courseHint.textContent =
+    "تم تحميل المواد. يرجى تحديد المادة المطلوبة.";
+}
+
+departmentSelect.addEventListener("change",updateCourseOptions);
+semesterSelect.addEventListener("change",updateCourseOptions);
 
 function showMessage(message,type){
   uploadMessage.textContent = message;
@@ -303,14 +372,14 @@ form.addEventListener("submit",async function(event){
 
   event.preventDefault();
 
-  const department = document.getElementById("department").value;
-  const semester = document.getElementById("semester").value;
-  const courseName = document.getElementById("courseName").value.trim();
+  const department = departmentSelect.value;
+  const semester = semesterSelect.value;
+  const courseName = courseSelect.value;
   const fileTitle = document.getElementById("fileTitle").value.trim();
   const file = document.getElementById("pdfFile").files[0];
 
   if(!department || !semester || !courseName || !fileTitle){
-    showMessage("يرجى استكمال بيانات المنهج أولاً.","error");
+    showMessage("يرجى تحديد القسم والفصل والمادة واستكمال البيانات.","error");
     return;
   }
 
@@ -369,7 +438,10 @@ form.addEventListener("submit",async function(event){
     }
 
     showMessage("تم رفع المنهج بنجاح.","success");
+
     form.reset();
+    updateCourseOptions();
+
     await loadMaterials();
 
   }catch(error){
