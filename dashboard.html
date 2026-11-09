@@ -1131,7 +1131,17 @@ async function initializeDashboard() {
     return;
 
   }
+const {data: roleData, error: roleError} = await client
+  .from("user_roles")
+  .select("role")
+  .eq("user_id", data.session.user.id)
+  .maybeSingle();
 
+if (roleError) {
+  console.error("Role error:", roleError);
+} else if (roleData && roleData.role === "admin") {
+  document.getElementById("manageMaterialsNav").style.display = "flex";
+}
 
   async function logout() {
 
