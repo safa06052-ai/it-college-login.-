@@ -171,7 +171,7 @@ select option{background:#111832;color:white}
       <div class="field">
         <label for="department">القسم</label>
         <select id="department" required>
-          <option value="">اختاري القسم</option>
+          <option value="">تحديد القسم</option>
           <option value="القسم العام">القسم العام</option>
           <option value="هندسة البرمجيات">هندسة البرمجيات</option>
           <option value="الشبكات والاتصالات">الشبكات والاتصالات</option>
@@ -184,7 +184,7 @@ select option{background:#111832;color:white}
       <div class="field">
         <label for="semester">الفصل الدراسي</label>
         <select id="semester" required>
-          <option value="">اختاري الفصل</option>
+          <option value="">تحديد الفصل الدراسي</option>
           <option value="الفصل الأول">الفصل الأول</option>
           <option value="الفصل الثاني">الفصل الثاني</option>
         </select>
@@ -291,7 +291,7 @@ async function initialize(){
   }
 
   if(!roleData || roleData.role !== "admin"){
-    alert("هذه الصفحة مخصصة للمشرف فقط.");
+    alert("هذه الصفحة مخصصة لحساب الإدارة فقط.");
     window.location.replace("./dashboard.html");
     return;
   }
@@ -309,8 +309,13 @@ form.addEventListener("submit",async function(event){
   const fileTitle = document.getElementById("fileTitle").value.trim();
   const file = document.getElementById("pdfFile").files[0];
 
+  if(!department || !semester || !courseName || !fileTitle){
+    showMessage("يرجى استكمال بيانات المنهج أولاً.","error");
+    return;
+  }
+
   if(!file){
-    showMessage("اختاري ملف PDF أولاً.","error");
+    showMessage("يرجى تحديد ملف PDF أولاً.","error");
     return;
   }
 
@@ -459,7 +464,7 @@ async function loadMaterials(){
 async function deleteMaterial(material,button){
 
   const confirmed = confirm(
-    "هل أنت متأكد من حذف هذا المنهج؟"
+    "تأكيد حذف هذا المنهج؟"
   );
 
   if(!confirmed) return;
