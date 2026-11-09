@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -185,7 +186,7 @@ a{color:inherit;text-decoration:none}
 .subdepartments .department h3{font-size:16px}
 .subdepartments .department p{font-size:12px}
 
-/* واجهة اختيار الفصل */
+/* اختيار الفصل */
 
 #semesterView{display:none}
 
@@ -236,7 +237,7 @@ a{color:inherit;text-decoration:none}
 .semester-info h3{color:#e3eaff;font-size:19px;margin-bottom:7px}
 .semester-info p{color:var(--muted);font-size:12px;line-height:2}
 
-/* واجهة المواد */
+/* المواد */
 
 #coursesView{display:none}
 
@@ -440,15 +441,17 @@ a{color:inherit;text-decoration:none}
       <i class="fa-solid fa-grip"></i>
       <span>الأقسام</span>
     </a>
-<a href="./materials.html" id="materialsNav">
-  <i class="fa-solid fa-book-open"></i>
-  <span>المناهج الدراسية</span>
-</a>
 
-<a href="./manage-materials.html" id="manageMaterialsNav" style="display:none">
-  <i class="fa-solid fa-cloud-arrow-up"></i>
-  <span>إدارة المناهج</span>
-</a>
+    <a href="./materials.html" id="materialsNav">
+      <i class="fa-solid fa-book-open"></i>
+      <span>المناهج الدراسية</span>
+    </a>
+
+    <a href="./manage-materials.html" id="manageMaterialsNav" style="display:none">
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <span>إدارة المناهج</span>
+    </a>
+
     <a href="./profile.html" id="profileNav">
       <i class="fa-solid fa-user-circle"></i>
       <span>الملف الشخصي</span>
@@ -492,8 +495,6 @@ a{color:inherit;text-decoration:none}
 </header>
 
 <div class="content">
-
-<!-- الصفحة الرئيسية -->
 
 <section id="homeView">
 
@@ -598,9 +599,6 @@ a{color:inherit;text-decoration:none}
   </section>
 </section>
 
-
-<!-- واجهة اختيار الفصل -->
-
 <section id="semesterView">
 
   <button class="back-btn" id="backSemestersHome">
@@ -619,12 +617,10 @@ a{color:inherit;text-decoration:none}
       <div class="semester-icon">
         <i class="fa-solid fa-book-open"></i>
       </div>
-
       <div class="semester-info">
         <h3>الفصل الأول</h3>
         <p>عرض مواد الفصل الدراسي الأول</p>
       </div>
-
       <i class="fa-solid fa-arrow-left"></i>
     </button>
 
@@ -632,20 +628,15 @@ a{color:inherit;text-decoration:none}
       <div class="semester-icon">
         <i class="fa-solid fa-book-open"></i>
       </div>
-
       <div class="semester-info">
         <h3>الفصل الثاني</h3>
         <p>عرض مواد الفصل الدراسي الثاني</p>
       </div>
-
       <i class="fa-solid fa-arrow-left"></i>
     </button>
 
   </div>
 </section>
-
-
-<!-- صفحة مواد القسم -->
 
 <section id="coursesView">
 
@@ -666,7 +657,6 @@ a{color:inherit;text-decoration:none}
         <i class="fa-solid fa-book-open"></i>
         المواد الدراسية
       </h2>
-
       <div class="course-list" id="courseList"></div>
     </section>
 
@@ -683,7 +673,6 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-
 <footer class="footer">
   <span>✦</span> &nbsp; Information Technology College &nbsp; <span>✦</span>
 </footer>
@@ -693,8 +682,8 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <script src="./courses.js"></script>
-<script>
 
+<script>
 
 /* عناصر الواجهة */
 
@@ -764,21 +753,36 @@ function showSemester(semester) {
 
   currentSemester = semester;
 
+  const departmentCourses =
+    window.COLLEGE_COURSES &&
+    window.COLLEGE_COURSES[currentDepartment];
+
+  if (!departmentCourses) {
+    alert("تعذر تحميل مواد هذا القسم. تأكدي من ملف courses.js.");
+    return;
+  }
+
   if (semester === "first") {
 
-    currentCourses = firstSemester;
+    currentCourses = departmentCourses.first || [];
+
     semesterSubtitle.textContent =
       "المقررات الدراسية — الفصل الدراسي الأول";
 
-  } else {
+  } else if (semester === "second") {
 
-    currentCourses = secondSemester;
+    currentCourses = departmentCourses.second || [];
+
     semesterSubtitle.textContent =
       "المقررات الدراسية — الفصل الدراسي الثاني";
 
+  } else {
+
+    return;
+
   }
 
-  departmentTitle.textContent = "القسم العام";
+  departmentTitle.textContent = currentDepartment;
 
   courseList.innerHTML = "";
 
@@ -789,6 +793,18 @@ function showSemester(semester) {
       <p>اضغط على إحدى المواد لعرض تفاصيلها.</p>
     </div>
   `;
+
+  if (currentCourses.length === 0) {
+
+    courseList.innerHTML = `
+      <div class="empty-details">
+        <i class="fa-solid fa-book-open"></i>
+        <h3>لا توجد مواد مضافة حالياً</h3>
+        <p>ستتم إضافة المواد لهذا الفصل لاحقاً.</p>
+      </div>
+    `;
+
+  }
 
   currentCourses.forEach((course,index) => {
 
@@ -801,9 +817,7 @@ function showSemester(semester) {
       <span class="course-number">
         ${String(index+1).padStart(2,"0")}
       </span>
-
       <span class="course-name"></span>
-
       <i class="fa-solid fa-chevron-left"></i>
     `;
 
@@ -839,8 +853,6 @@ function showSemester(semester) {
 
 function showCourseDetails(course) {
 
-  /* المواد التي لم تضاف معلوماتها بعد */
-
   if (
     !course.doctor &&
     !course.day &&
@@ -851,12 +863,8 @@ function showCourseDetails(course) {
     courseDetails.innerHTML = `
       <div class="empty-details">
         <i class="fa-solid fa-book-open"></i>
-
         <h3 class="details-title"></h3>
-
-        <p>
-          سيتم إضافة تفاصيل هذا المقرر لاحقاً.
-        </p>
+        <p>سيتم إضافة تفاصيل هذا المقرر لاحقاً.</p>
       </div>
     `;
 
@@ -867,14 +875,12 @@ function showCourseDetails(course) {
 
   }
 
-
-  const timesHTML = course.times.map(time => `
+  const timesHTML = (course.times || []).map(time => `
     <div class="lecture-time">
       <i class="fa-regular fa-clock"></i>
       ${time}
     </div>
   `).join("");
-
 
   courseDetails.innerHTML = `
 
@@ -922,13 +928,13 @@ function showCourseDetails(course) {
     course.name;
 
   courseDetails.querySelector(".doctor-name").textContent =
-    course.doctor;
+    course.doctor || "لم يحدد بعد";
 
   courseDetails.querySelector(".lecture-day").textContent =
-    course.day;
+    course.day || "لم يحدد بعد";
 
   courseDetails.querySelector(".lecture-location").textContent =
-    course.location;
+    course.location || "لم يحدد بعد";
 
 }
 
@@ -1012,7 +1018,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
 
-
 const script = document.createElement("script");
 
 script.src =
@@ -1032,11 +1037,8 @@ document.head.appendChild(script);
 async function initializeDashboard() {
 
   const client = supabase.createClient(
-
     SUPABASE_URL,
-
     SUPABASE_KEY,
-
     {
       auth: {
         storage: window.sessionStorage,
@@ -1045,12 +1047,9 @@ async function initializeDashboard() {
         detectSessionInUrl: true
       }
     }
-
   );
 
-
   const {data,error} = await client.auth.getSession();
-
 
   if (error || !data.session) {
 
@@ -1058,17 +1057,22 @@ async function initializeDashboard() {
     return;
 
   }
-const {data: roleData, error: roleError} = await client
-  .from("user_roles")
-  .select("role")
-  .eq("user_id", data.session.user.id)
-  .maybeSingle();
 
-if (roleError) {
-  console.error("Role error:", roleError);
-} else if (roleData && roleData.role === "admin") {
-  document.getElementById("manageMaterialsNav").style.display = "flex";
-}
+  const {data: roleData, error: roleError} = await client
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", data.session.user.id)
+    .maybeSingle();
+
+  if (roleError) {
+
+    console.error("Role error:", roleError);
+
+  } else if (roleData && roleData.role === "admin") {
+
+    document.getElementById("manageMaterialsNav").style.display = "flex";
+
+  }
 
   async function logout() {
 
@@ -1084,7 +1088,6 @@ if (roleError) {
     window.location.replace("./index.html");
 
   }
-
 
   document.getElementById("logoutBtn")
     .addEventListener("click",logout);
