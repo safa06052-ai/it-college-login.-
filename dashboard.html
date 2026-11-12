@@ -851,14 +851,110 @@ function showSemester(semester) {
 
 /* عرض تفاصيل المادة */
 
+
+
 function showCourseDetails(course) {
 
-  if (
-    !course.doctor &&
-    !course.day &&
-    !course.times &&
-    !course.location
-  ) {
+  // عنوان المادة
+  const title = course.name || "المادة الدراسية";
+
+  // إذا كانت المادة تحتوي على مجموعات
+  if (course.groups && course.groups.length > 0) {
+
+    courseDetails.innerHTML = `
+      <span class="course-label">تفاصيل المقرر الدراسي</span>
+
+      <h2 class="details-title"></h2>
+
+      <p class="details-subtitle">
+        اختاري المجموعة لعرض جدول المحاضرات
+      </p>
+
+      <div id="groupButtons"
+        style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;">
+      </div>
+
+      <div id="groupDetails"></div>
+    `;
+
+    courseDetails.querySelector(".details-title").textContent = title;
+
+    const buttons = courseDetails.querySelector("#groupButtons");
+    const details = courseDetails.querySelector("#groupDetails");
+
+    course.groups.forEach((group, index) => {
+
+      const button = document.createElement("button");
+
+      button.type = "button";
+      button.textContent = group.name;
+      button.className = "back-btn";
+
+      button.style.marginBottom = "0";
+
+      button.addEventListener("click", () => {
+
+        buttons.querySelectorAll("button").forEach(btn => {
+          btn.style.borderColor = "var(--border)";
+          btn.style.background = "#17194c";
+        });
+
+        button.style.borderColor = "var(--cyan)";
+        button.style.background = "#29205e";
+
+        const lecturesHTML = (group.lectures || []).map(lecture => `
+          <div class="info-card" style="margin-top:12px;">
+            <i class="fa-solid fa-calendar-days"></i>
+            <small>يوم المحاضرة</small>
+            <strong>${lecture.day || "غير محدد"}</strong>
+
+            <div style="margin-top:12px;">
+              <small>وقت المحاضرة</small>
+              <strong>${lecture.time || "غير محدد"}</strong>
+            </div>
+
+            <div style="margin-top:12px;">
+              <small>مكان المحاضرة</small>
+              <strong>${lecture.location || "غير محدد"}</strong>
+            </div>
+          </div>
+        `).join("");
+
+        details.innerHTML = `
+          <div class="info-card">
+            <i class="fa-solid fa-user-tie"></i>
+            <small>اسم الدكتور</small>
+            <strong class="group-doctor"></strong>
+          </div>
+
+          <h3 style="color:var(--cyan);margin-top:20px;">
+            جدول المحاضرات
+          </h3>
+
+          ${lecturesHTML}
+        `;
+
+        details.querySelector(".group-doctor").textContent =
+          group.doctor || "لم يحدد بعد";
+
+      });
+
+      buttons.appendChild(button);
+
+      if (index === 0) {
+        button.click();
+      }
+
+    });
+
+    return;
+  }
+
+  // المواد العادية
+  const hasDetails =
+    course.doctor || course.day || course.times || course.location;
+
+  if (!hasDetails) {
 
     courseDetails.innerHTML = `
       <div class="empty-details">
@@ -868,25 +964,27 @@ function showCourseDetails(course) {
       </div>
     `;
 
-    courseDetails.querySelector(".details-title").textContent =
-      course.name;
-
+    courseDetails.querySelector(".details-title").textContent = title;
     return;
-
   }
 
-  const timesHTML = (course.times || []).map(time => `
-    <div class="lecture-time">
-      <i class="fa-regular fa-clock"></i>
-      ${time}
-    </div>
-  `).join("");
+  // دعم المحاضرات المتعددة لنفس المجموعة
+  const lectures = course.lectures || [];
+
+  const timesHTML = lectures.length
+    ? lectures.map(lecture => `
+        <div class="lecture-time">
+          <strong>${lecture.day}</strong><br>
+          ${lecture.time}<br>
+          ${lecture.location}
+        </div>
+      `).join("")
+    : (course.times || []).map(time => `
+        <div class="lecture-time">${time}</div>
+      `).join("");
 
   courseDetails.innerHTML = `
-
-    <span class="course-label">
-      تفاصيل المقرر الدراسي
-    </span>
+    <span class="course-label">تفاصيل المقرر الدراسي</span>
 
     <h2 class="details-title"></h2>
 
@@ -904,7 +1002,7 @@ function showCourseDetails(course) {
 
       <div class="info-card">
         <i class="fa-solid fa-calendar-days"></i>
-        <small>يوم المحاضرة</small>
+        <small>أيام المحاضرات</small>
         <strong class="lecture-day"></strong>
       </div>
 
@@ -921,22 +1019,26 @@ function showCourseDetails(course) {
       </div>
 
     </div>
-
   `;
 
-  courseDetails.querySelector(".details-title").textContent =
-    course.name;
+  courseDetails.querySelector(".details-title").textContent = title;
 
   courseDetails.querySelector(".doctor-name").textContent =
     course.doctor || "لم يحدد بعد";
 
   courseDetails.querySelector(".lecture-day").textContent =
-    course.day || "لم يحدد بعد";
+    lectures.length
+      ? lectures.map(item => item.day).join(" و ")
+      : course.day || "لم يحدد بعد";
 
   courseDetails.querySelector(".lecture-location").textContent =
-    course.location || "لم يحدد بعد";
-
+    lectures.length
+      ? lectures.map(item => item.location).join(" و ")
+      : course.location || "لم يحدد بعد";
 }
+
+
+  
 
 
 /* أزرار دخول الأقسام */
