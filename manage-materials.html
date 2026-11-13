@@ -388,7 +388,7 @@ async function initialize(){
     .maybeSingle();
 
   if(roleError){
-    alert("تعذر التحقق من صلاحيات الحساب.");
+alert("تعذر التحقق من صلاحيات الحساب: " + roleError.message);
     window.location.replace("./dashboard.html");
     return;
   }
