@@ -749,55 +749,66 @@ let currentDepartment = "";
 let currentSemester = "";
 let currentCourses = [];
 
-
 /* إظهار الصفحة الرئيسية */
 
 function showHome() {
-
   homeView.style.display = "block";
   semesterView.style.display = "none";
+  computerScienceView.style.display = "none";
   coursesView.style.display = "none";
 
-  window.scrollTo({top:0,behavior:"smooth"});
-
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
 
-/* إظهار اختيار الفصل */
+/* إظهار فصول القسم العام */
 
 function showSemesters() {
-
   homeView.style.display = "none";
   semesterView.style.display = "block";
+  computerScienceView.style.display = "none";
   coursesView.style.display = "none";
 
-  window.scrollTo({top:0,behavior:"smooth"});
+  window.scrollTo({top:0, behavior:"smooth"});
+}
 
+
+/* إظهار خيارات علوم الحاسوب */
+
+function showComputerScience() {
+  homeView.style.display = "none";
+  semesterView.style.display = "none";
+  computerScienceView.style.display = "block";
+  coursesView.style.display = "none";
+
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
 
 /* دخول القسم */
 
 function showDepartment(name) {
-
   const departmentCourses =
     window.COLLEGE_COURSES &&
     window.COLLEGE_COURSES[name];
 
   if (!departmentCourses) {
-    alert("بيانات هذا القسم لم تُضف بعد.");
+    alert("بيانات هذا القسم غير متاحة حالياً.");
     return;
   }
 
   currentDepartment = name;
 
-  // القسم العام يظل مقسماً إلى فصلين
   if (name === "القسم العام") {
     showSemesters();
     return;
   }
 
-  // الأقسام التي لا تحتوي على فصول تعرض موادها مباشرة
+  if (name === "علوم الحاسوب") {
+    showComputerScience();
+    return;
+  }
+
   if (Array.isArray(departmentCourses.courses)) {
     currentSemester = "";
     currentCourses = departmentCourses.courses;
@@ -812,24 +823,28 @@ function showDepartment(name) {
 /* اختيار الفصل الدراسي */
 
 function showSemester(semester) {
-
-  currentSemester = semester;
-
   const departmentCourses =
     window.COLLEGE_COURSES &&
     window.COLLEGE_COURSES[currentDepartment];
 
   if (!departmentCourses) {
-    alert("تعذر تحميل مواد هذا القسم. تأكدي من ملف courses.js.");
+    alert("تعذر تحميل بيانات المقررات.");
     return;
   }
+
+  currentSemester = semester;
 
   if (semester === "first") {
     currentCourses = departmentCourses.first || [];
     renderCourses("المقررات الدراسية — الفصل الدراسي الأول");
+
   } else if (semester === "second") {
     currentCourses = departmentCourses.second || [];
     renderCourses("المقررات الدراسية — الفصل الدراسي الثاني");
+
+  } else if (semester === "third") {
+    currentCourses = departmentCourses.third || [];
+    renderCourses("المقررات الدراسية — الفصل الدراسي الثالث");
   }
 }
 
@@ -837,7 +852,6 @@ function showSemester(semester) {
 /* عرض قائمة المواد */
 
 function renderCourses(subtitle) {
-
   departmentTitle.textContent = currentDepartment;
   semesterSubtitle.textContent = subtitle;
 
@@ -847,11 +861,11 @@ function renderCourses(subtitle) {
     <div class="empty-details">
       <i class="fa-solid fa-book-open"></i>
       <h3>اختر مادة دراسية</h3>
-      <p>اضغط على إحدى المواد لعرض تفاصيلها.</p>
+      <p>يمكن عرض تفاصيل المقرر باختياره.</p>
     </div>
   `;
 
-  if (currentCourses.length === 0) {
+  if (!currentCourses.length) {
     courseList.innerHTML = `
       <div class="empty-details">
         <i class="fa-solid fa-book-open"></i>
@@ -862,7 +876,6 @@ function renderCourses(subtitle) {
   }
 
   currentCourses.forEach((course, index) => {
-
     const button = document.createElement("button");
     button.type = "button";
     button.className = "course-item";
@@ -891,14 +904,11 @@ function renderCourses(subtitle) {
 
   homeView.style.display = "none";
   semesterView.style.display = "none";
+  computerScienceView.style.display = "none";
   coursesView.style.display = "block";
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({top:0, behavior:"smooth"});
 }
-
-
-/* عرض تفاصيل المادة */
-    
 /* عرض تفاصيل المادة */
 function showCourseDetails(course) {
 
