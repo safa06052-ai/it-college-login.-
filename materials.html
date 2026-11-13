@@ -392,7 +392,50 @@ select option {
 
     </div>
   </section>
+<section class="panel">
+  <h3 class="panel-title">
+    <i class="fa-solid fa-cloud-arrow-up"></i>
+    المساهمة بمنهج دراسي
+  </h3>
 
+  <p style="color:var(--muted);font-size:13px;line-height:2;margin-bottom:16px">
+    يمكنك إرسال ملف المنهج بصيغة PDF، وسيتم مراجعته من الإدارة قبل إضافته إلى المكتبة.
+  </p>
+
+  <form id="requestForm">
+    <div class="field" style="margin-bottom:15px">
+      <label for="requestFile">ملف المنهج (PDF)</label>
+      <input
+        type="file"
+        id="requestFile"
+        accept=".pdf,application/pdf"
+        required
+        style="width:100%;padding:13px;border-radius:12px;border:1px solid var(--border);background:#11162e;color:var(--text);font-family:inherit"
+      >
+    </div>
+
+    <button type="submit" class="action-btn download" id="requestBtn" style="width:100%;padding:13px">
+      <i class="fa-solid fa-paper-plane"></i>
+      إرسال المنهج للمراجعة
+    </button>
+
+    <p id="requestMessage" style="font-size:13px;line-height:2;margin-top:12px"></p>
+  </form>
+</section>
+
+<section class="panel">
+  <h3 class="panel-title">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    طلباتي السابقة
+  </h3>
+
+  <div id="myRequests" class="material-list">
+    <div class="status">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      جاري تحميل طلباتك...
+    </div>
+  </div>
+</section>
   <section class="panel">
     <h3 class="panel-title">
       <i class="fa-solid fa-folder-open"></i>
@@ -821,6 +864,223 @@ function createMaterialCard(file, department) {
   materialList.appendChild(card);
 }
 
+  /* إرسال طلب منهج جديد */
+
+const requestForm = document.getElementById("requestForm");
+const requestFile = document.getElementById("requestFile");
+const requestBtn = document.getElementById("requestBtn");
+const requestMessage = document.getElementById("requestMessage");
+const myRequests = document.getElementById("myRequests");
+
+
+requestForm.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const { data: sessionData, error: sessionError } =
+    await client.auth.getSession();
+
+  const user = sessionData?.session?.user;
+
+  if (sessionError || !user) {
+    requestMessage.textContent = "انتهت جلسة تسجيل الدخول. سجّلي الدخول مرة أخرى.";
+    return;
+  }
+
+  const department = departmentSelect.value;
+  const course = courseSelect.value;
+  const semester = department === "القسم العام"
+    ? semesterSelect.value
+    : NO_SEMESTER;
+
+  const file = requestFile.files[0];
+
+  if (!department || !course) {
+    requestMessage.textContent = "اختاري القسم والمادة أولاً من قائمة تحديد المنهج.";
+    return;
+  }
+
+  if (department === "القسم العام" && !semester) {
+    requestMessage.textContent = "اختاري الفصل الدراسي أولاً.";
+    return;
+  }
+
+  if (!file) {
+    requestMessage.textContent = "اختاري ملف PDF أولاً.";
+    return;
+  }
+
+  if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+    requestMessage.textContent = "الملف يجب أن يكون بصيغة PDF فقط.";
+    return;
+  }
+
+  if (file.size > 50 * 1024 * 1024) {
+    requestMessage.textContent = "حجم الملف أكبر من الحد المسموح (50 ميجابايت).";
+    return;
+  }
+
+  requestBtn.disabled = true;
+  requestBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري إرسال الطلب...';
+  requestMessage.textContent = "";
+
+  try {
+    const filePath = user.id + "/" + crypto.randomUUID() + ".pdf";
+
+    /* رفع الملف إلى مساحة الطلبات الخاصة */
+
+    const { error: uploadError } = await client
+      .storage
+      .from("course-material-requests")
+      .upload(filePath, file, {
+        contentType: "application/pdf",
+        upsert: false
+      });
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    /* تسجيل الطلب في قاعدة البيانات */
+
+    const { error: insertError } = await client
+      .from("course_material_requests")
+      .insert({
+        department: department,
+        semester: semester,
+        course_name: course,
+        file_name: file.name,
+        storage_path: filePath,
+        uploaded_by: user.id,
+        status: "pending"
+      });
+
+    if (insertError) {
+      console.error(insertError);
+      requestMessage.textContent =
+        "تم رفع الملف، لكن تعذّر تسجيل الطلب. تواصلي مع الإدارة.";
+      return;
+    }
+
+    requestMessage.textContent = "تم إرسال المنهج بنجاح، وهو الآن قيد مراجعة الإدارة.";
+    requestMessage.style.color = "var(--cyan)";
+
+    requestForm.reset();
+
+    await loadMyRequests();
+
+  } catch (error) {
+    console.error("Request upload error:", error);
+
+    requestMessage.textContent =
+      "تعذّر إرسال الطلب. تأكدي من الاتصال والصلاحيات ثم حاولي مرة أخرى.";
+
+    requestMessage.style.color = "var(--pink)";
+
+  } finally {
+    requestBtn.disabled = false;
+    requestBtn.innerHTML =
+      '<i class="fa-solid fa-paper-plane"></i> إرسال المنهج للمراجعة';
+  }
+});
+
+
+/* تحميل طلبات الطالب */
+
+async function loadMyRequests() {
+  myRequests.innerHTML = `
+    <div class="status">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      جاري تحميل طلباتك...
+    </div>
+  `;
+
+  const { data, error } = await client
+    .from("course_material_requests")
+    .select("id, department, semester, course_name, file_name, status, admin_note, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("My requests error:", error);
+
+    myRequests.innerHTML = `
+      <div class="status">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        تعذّر تحميل الطلبات حالياً.
+      </div>
+    `;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    myRequests.innerHTML = `
+      <div class="status">
+        <i class="fa-solid fa-inbox"></i>
+        لم ترسلي أي مناهج للمراجعة حتى الآن.
+      </div>
+    `;
+    return;
+  }
+
+  myRequests.innerHTML = "";
+
+  data.forEach(request => {
+    const card = document.createElement("div");
+    card.className = "material-card";
+
+    const info = document.createElement("div");
+    info.className = "file-info";
+
+    const icon = document.createElement("div");
+    icon.className = "pdf-icon";
+    icon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+
+    const details = document.createElement("div");
+
+    const name = document.createElement("div");
+    name.className = "file-name";
+    name.textContent = request.file_name;
+
+    const course = document.createElement("div");
+    course.className = "file-details";
+    course.textContent =
+      request.department + " • " +
+      request.course_name + " • " +
+      request.semester;
+
+    const status = document.createElement("div");
+    status.style.fontSize = "12px";
+    status.style.marginTop = "7px";
+    status.style.fontWeight = "700";
+
+    if (request.status === "approved") {
+      status.textContent = "✓ تمت الموافقة على المنهج";
+      status.style.color = "var(--cyan)";
+    } else if (request.status === "rejected") {
+      status.textContent = "✕ لم تتم الموافقة على المنهج";
+      status.style.color = "var(--pink)";
+    } else {
+      status.textContent = "◷ الطلب قيد مراجعة الإدارة";
+      status.style.color = "#f0cf75";
+    }
+
+    details.appendChild(name);
+    details.appendChild(course);
+    details.appendChild(status);
+
+    if (request.admin_note) {
+      const note = document.createElement("div");
+      note.className = "file-details";
+      note.textContent = "ملاحظة الإدارة: " + request.admin_note;
+      details.appendChild(note);
+    }
+
+    info.appendChild(icon);
+    info.appendChild(details);
+    card.appendChild(info);
+
+    myRequests.appendChild(card);
+  });
+}
 
 /* التحقق من تسجيل الدخول */
 
@@ -838,15 +1098,17 @@ async function initializeMaterials() {
       return;
     }
 
-    showStatus(
-      "يرجى تحديد القسم والمادة لعرض المناهج."
-    );
+  
 
   } catch (error) {
     console.error(error);
+showStatus(
+  "يرجى تحديد القسم والمادة لعرض المناهج."
+);
 
-    showStatus(
-      "تعذر الاتصال. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
+await loadMyRequests();
+    
+اتصال. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
       "fa-triangle-exclamation"
     );
   }
