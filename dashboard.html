@@ -1121,7 +1121,26 @@ document.querySelectorAll("[data-section]").forEach(button => {
   });
 
 });
+/* خيارات علوم الحاسوب */
 
+document.querySelectorAll("[data-cs-option]").forEach(button => {
+  button.addEventListener("click", () => {
+    const option = button.dataset.csOption;
+
+    if (option === "third") {
+      currentDepartment = "علوم الحاسوب";
+      showSemester("third");
+    } else {
+      showDepartment(option);
+    }
+  });
+});
+
+
+/* الرجوع من خيارات علوم الحاسوب */
+
+document.getElementById("backCSHome")
+  .addEventListener("click", showHome);
 
 /* أزرار اختيار الفصل */
 
