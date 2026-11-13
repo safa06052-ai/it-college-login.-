@@ -850,27 +850,24 @@ function renderCourses(subtitle) {
 
 
 /* عرض تفاصيل المادة */
-  function showCourseDetails(course) {
+    
+/* عرض تفاصيل المادة */
+function showCourseDetails(course) {
 
-  // عنوان المادة
   const title = course.name || "المادة الدراسية";
 
-  // إذا كانت المادة تحتوي على مجموعات
+  // المواد التي تحتوي على مجموعات
   if (course.groups && course.groups.length > 0) {
 
     courseDetails.innerHTML = `
       <span class="course-label">تفاصيل المقرر الدراسي</span>
-
       <h2 class="details-title"></h2>
-
       <p class="details-subtitle">
         اختاري المجموعة لعرض جدول المحاضرات
       </p>
-
       <div id="groupButtons"
         style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;">
       </div>
-
       <div id="groupDetails"></div>
     `;
 
@@ -882,11 +879,9 @@ function renderCourses(subtitle) {
     course.groups.forEach((group, index) => {
 
       const button = document.createElement("button");
-
       button.type = "button";
       button.textContent = group.name;
       button.className = "back-btn";
-
       button.style.marginBottom = "0";
 
       button.addEventListener("click", () => {
@@ -899,36 +894,52 @@ function renderCourses(subtitle) {
         button.style.borderColor = "var(--cyan)";
         button.style.background = "#29205e";
 
-        const lecturesHTML = (group.lectures || []).map(lecture => `
-          <div class="info-card" style="margin-top:12px;">
-            <i class="fa-solid fa-calendar-days"></i>
-            <small>يوم المحاضرة</small>
-            <strong>${lecture.day || "غير محدد"}</strong>
+        const lectures = group.lectures || [];
 
-            <div style="margin-top:12px;">
-              <small>وقت المحاضرة</small>
-              <strong>${lecture.time || "غير محدد"}</strong>
-            </div>
+        const days = [...new Set(
+          lectures.map(item => item.day).filter(Boolean)
+        )];
 
-            <div style="margin-top:12px;">
-              <small>مكان المحاضرة</small>
-              <strong>${lecture.location || "غير محدد"}</strong>
-            </div>
+        const locations = [...new Set(
+          lectures.map(item => item.location).filter(Boolean)
+        )];
+
+        const lecturesHTML = lectures.map(lecture => `
+          <div class="lecture-time">
+            ${lecture.time || "غير محدد"}
           </div>
         `).join("");
 
         details.innerHTML = `
-          <div class="info-card">
-            <i class="fa-solid fa-user-tie"></i>
-            <small>اسم الدكتور</small>
-            <strong class="group-doctor"></strong>
+          <div class="info-grid">
+
+            <div class="info-card">
+              <i class="fa-solid fa-user-tie"></i>
+              <small>اسم الدكتور</small>
+              <strong class="group-doctor"></strong>
+            </div>
+
+            <div class="info-card">
+              <i class="fa-solid fa-calendar-days"></i>
+              <small>أيام المحاضرات</small>
+              <strong>${days.join(" و ") || "غير محدد"}</strong>
+            </div>
+
+            <div class="info-card">
+              <i class="fa-solid fa-clock"></i>
+              <small>مواعيد المحاضرات</small>
+              <div class="lecture-times">
+                ${lecturesHTML || "غير محدد"}
+              </div>
+            </div>
+
+            <div class="info-card">
+              <i class="fa-solid fa-location-dot"></i>
+              <small>مكان المحاضرة</small>
+              <strong>${locations.join(" و ") || "غير محدد"}</strong>
+            </div>
+
           </div>
-
-          <h3 style="color:var(--cyan);margin-top:20px;">
-            جدول المحاضرات
-          </h3>
-
-          ${lecturesHTML}
         `;
 
         details.querySelector(".group-doctor").textContent =
@@ -948,8 +959,11 @@ function renderCourses(subtitle) {
   }
 
   // المواد العادية
+  const lectures = course.lectures || [];
+
   const hasDetails =
-    course.doctor || course.day || course.times || course.location;
+    course.doctor || course.day || course.times ||
+    course.location || lectures.length > 0;
 
   if (!hasDetails) {
 
@@ -964,10 +978,14 @@ function renderCourses(subtitle) {
     courseDetails.querySelector(".details-title").textContent = title;
     return;
   }
-    
 
-  // دعم المحاضرات المتعددة لنفس المجموعة
-  const lectures = course.lectures || [];
+  const days = [...new Set(
+    lectures.map(item => item.day).filter(Boolean)
+  )];
+
+  const locations = [...new Set(
+    lectures.map(item => item.location).filter(Boolean)
+  )];
 
   const timesHTML = lectures.length
     ? lectures.map(lecture => `
@@ -1024,12 +1042,12 @@ function renderCourses(subtitle) {
 
   courseDetails.querySelector(".lecture-day").textContent =
     lectures.length
-      ? lectures.map(item => item.day).join(" و ")
+      ? days.join(" و ") || "لم يحدد بعد"
       : course.day || "لم يحدد بعد";
 
   courseDetails.querySelector(".lecture-location").textContent =
     lectures.length
-      ? lectures.map(item => item.location).join(" و ")
+      ? locations.join(" و ") || "لم يحدد بعد"
       : course.location || "لم يحدد بعد";
 }
 
