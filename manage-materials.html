@@ -387,12 +387,13 @@ async function initialize(){
     .eq("user_id",currentUser.id)
     .maybeSingle();
 
-  if(roleError){
-alert("تعذر التحقق من صلاحيات الحساب: " + roleError.message);
-    window.location.replace("./dashboard.html");
-    return;
-  }
-
+if(roleError){
+  alert(
+    "الخطأ: " + roleError.message +
+    "\nالكود: " + roleError.code
+  );
+  return;
+}
   if(!roleData || roleData.role !== "admin"){
     alert("هذه الصفحة مخصصة لحساب الإدارة فقط.");
     window.location.replace("./dashboard.html");
