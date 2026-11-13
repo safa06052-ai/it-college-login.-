@@ -689,18 +689,418 @@ window.COLLEGE_COURSES = {
 
     ]
   },
-
+  
   "علوم الحاسوب": {
-    third: []
+    third: [
+      {
+        name: "مقدمة في هندسة البرمجيات",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "أ. إيمان جبريل",
+            lectures: [
+              { day: "الأحد", time: "9:00 AM - 11:00 AM", location: "قاعة 203" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "أ. إيمان جبريل",
+            lectures: [
+              { day: "الأحد", time: "11:00 AM - 1:00 PM", location: "قاعة 203" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "قواعد البيانات",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "أ. أبوعجيلة مصباح",
+            lectures: [
+              { day: "الأحد", time: "9:00 AM - 11:00 AM", location: "قاعة 204" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "أ. أبوعجيلة مصباح",
+            lectures: [
+              { day: "الاثنين", time: "9:00 AM - 11:00 AM", location: "قاعة 46" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "الجبر الخطي",
+        doctor: "مفتاح الدبار",
+        lectures: [
+          { day: "الأربعاء", time: "1:00 PM - 3:00 PM", location: "مدرج الأعمار" }
+        ]
+      },
+      {
+        name: "مقدمة في نظم المعلومات",
+        doctor: "أ. إيمان جبريل",
+        lectures: [
+          { day: "الثلاثاء", time: "11:00 AM - 1:00 PM", location: "أون لاين (8)" }
+        ]
+      }
+    ]
   },
 
   "الأمن السيبراني": {
-    courses: []
+    courses: [
+      {
+        name: "هياكل البيانات والخوارزميات",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "أحمد الشاطر",
+            lectures: [
+              { day: "السبت", time: "1:00 PM - 3:00 PM", location: "قاعة 46" },
+              { day: "السبت", time: "3:00 PM - 5:00 PM", location: "قاعة 46" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "أحمد الشاطر",
+            lectures: [
+              { day: "الأحد", time: "1:00 PM - 3:00 PM", location: "قاعة 25" },
+              { day: "الأحد", time: "3:00 PM - 5:00 PM", location: "قاعة 25" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "اللغات الرسمية والأتمتة",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "نجاة أطبيقة",
+            lectures: [
+              { day: "الخميس", time: "9:00 AM - 11:00 AM", location: "قاعة 205" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "نجاة أطبيقة",
+            lectures: [
+              { day: "الخميس", time: "11:00 AM - 1:00 PM", location: "قاعة 205" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "تصميم منطقي",
+        doctor: "أ. أمبارك أمحمد",
+        lectures: [
+          { day: "الاثنين", time: "3:00 PM - 5:00 PM", location: "قاعة 46" }
+        ]
+      },
+      {
+        name: "معمارية الحاسوب",
+        doctor: "أ. أمبارك أمحمد",
+        lectures: [
+          { day: "السبت", time: "11:00 AM - 1:00 PM", location: "قاعة 46" },
+          { day: "الأحد", time: "3:00 PM - 5:00 PM", location: "قاعة 46" }
+        ]
+      },
+      {
+        name: "برمجة متقدمة 1",
+        doctor: "هناء الهمالي",
+        lectures: [
+          { day: "الخميس", time: "9:00 AM - 11:00 AM", location: "قاعة 202" },
+          { day: "الخميس", time: "11:00 AM - 1:00 PM", location: "قاعة 202" }
+        ]
+      },
+      {
+        name: "التحليل العددي",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "عائشة دينار",
+            lectures: [
+              { day: "السبت", time: "11:00 AM - 1:00 PM", location: "قاعة 216" },
+              { day: "السبت", time: "1:00 PM - 3:00 PM", location: "قاعة 216" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "يونس أمبارك",
+            lectures: [
+              { day: "الأحد", time: "11:00 AM - 1:00 PM", location: "قاعة 46" },
+              { day: "الأحد", time: "1:00 PM - 3:00 PM", location: "قاعة 46" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "نظم التشغيل",
+        doctor: "إيمان جبريل",
+        lectures: [
+          { day: "الثلاثاء", time: "9:00 AM - 11:00 AM", location: "أون لاين (10)" },
+          { day: "الثلاثاء", time: "11:00 AM - 1:00 PM", location: "أون لاين (10)" }
+        ]
+      },
+      {
+        name: "كتابة تقارير",
+        doctor: "معمر الفاسي",
+        lectures: [
+          { day: "الخميس", time: "3:00 PM - 5:00 PM", location: "قاعة 46" }
+        ]
+      },
+      {
+        name: "معالجات صورية",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "نعيمة موسى",
+            lectures: [
+              { day: "الأربعاء", time: "11:00 AM - 1:00 PM", location: "قاعة 204" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "نعيمة موسى",
+            lectures: [
+              { day: "الأربعاء", time: "1:00 PM - 3:00 PM", location: "قاعة 203" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "مقدمة في شبكات الحاسوب",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "المبروك التمامي",
+            lectures: [
+              { day: "السبت", time: "9:00 AM - 11:00 AM", location: "قاعة 206" },
+              { day: "السبت", time: "11:00 AM - 1:00 PM", location: "قاعة 204" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "المبروك التمامي",
+            lectures: [
+              { day: "الأربعاء", time: "9:00 AM - 11:00 AM", location: "قاعة 204" },
+              { day: "الأربعاء", time: "11:00 AM - 1:00 PM", location: "قاعة 205" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "مشروع التخرج",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "إيمان جبريل",
+            lectures: [
+              { day: "الثلاثاء", time: "3:00 PM - 5:00 PM", location: "أون لاين (3)" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "إيمان جبريل",
+            lectures: [
+              { day: "السبت", time: "3:00 PM - 5:00 PM", location: "أون لاين (1)" }
+            ]
+          },
+          {
+            name: "المجموعة 3",
+            doctor: "إيمان جبريل",
+            lectures: [
+              { day: "الأحد", time: "3:00 PM - 5:00 PM", location: "أون لاين (6)" }
+            ]
+          },
+          {
+            name: "المجموعة 4",
+            doctor: "نجاة أطبيقة",
+            lectures: [
+              { day: "الاثنين", time: "3:00 PM - 5:00 PM", location: "أون لاين (3)" }
+            ]
+          }
+        ]
+      }
+    ]
   },
 
   "الذكاء الاصطناعي": {
-    courses: []
+    courses: [
+      {
+        name: "هياكل البيانات والخوارزميات",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "أحمد الشاطر",
+            lectures: [
+              { day: "السبت", time: "1:00 PM - 3:00 PM", location: "قاعة 46" },
+              { day: "السبت", time: "3:00 PM - 5:00 PM", location: "قاعة 46" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "أحمد الشاطر",
+            lectures: [
+              { day: "الأحد", time: "1:00 PM - 3:00 PM", location: "قاعة 25" },
+              { day: "الأحد", time: "3:00 PM - 5:00 PM", location: "قاعة 25" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "اللغات الرسمية والأتمتة",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "نجاة أطبيقة",
+            lectures: [
+              { day: "الخميس", time: "9:00 AM - 11:00 AM", location: "قاعة 205" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "نجاة أطبيقة",
+            lectures: [
+              { day: "الخميس", time: "11:00 AM - 1:00 PM", location: "قاعة 205" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "تصميم منطقي",
+        doctor: "أ. أمبارك أمحمد",
+        lectures: [
+          { day: "الاثنين", time: "3:00 PM - 5:00 PM", location: "قاعة 46" }
+        ]
+      },
+      {
+        name: "معمارية الحاسوب",
+        doctor: "أ. أمبارك أمحمد",
+        lectures: [
+          { day: "السبت", time: "11:00 AM - 1:00 PM", location: "قاعة 46" },
+          { day: "الأحد", time: "3:00 PM - 5:00 PM", location: "قاعة 46" }
+        ]
+      },
+      {
+        name: "برمجة متقدمة 1",
+        doctor: "هناء الهمالي",
+        lectures: [
+          { day: "الخميس", time: "9:00 AM - 11:00 AM", location: "قاعة 202" },
+          { day: "الخميس", time: "11:00 AM - 1:00 PM", location: "قاعة 202" }
+        ]
+      },
+      {
+        name: "التحليل العددي",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "عائشة دينار",
+            lectures: [
+              { day: "السبت", time: "11:00 AM - 1:00 PM", location: "قاعة 216" },
+              { day: "السبت", time: "1:00 PM - 3:00 PM", location: "قاعة 216" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "يونس أمبارك",
+            lectures: [
+              { day: "الأحد", time: "11:00 AM - 1:00 PM", location: "قاعة 46" },
+              { day: "الأحد", time: "1:00 PM - 3:00 PM", location: "قاعة 46" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "نظم التشغيل",
+        doctor: "إيمان جبريل",
+        lectures: [
+          { day: "الثلاثاء", time: "9:00 AM - 11:00 AM", location: "أون لاين (10)" },
+          { day: "الثلاثاء", time: "11:00 AM - 1:00 PM", location: "أون لاين (10)" }
+        ]
+      },
+      {
+        name: "كتابة تقارير",
+        doctor: "معمر الفاسي",
+        lectures: [
+          { day: "الخميس", time: "3:00 PM - 5:00 PM", location: "قاعة 46" }
+        ]
+      },
+      {
+        name: "معالجات صورية",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "نعيمة موسى",
+            lectures: [
+              { day: "الأربعاء", time: "11:00 AM - 1:00 PM", location: "قاعة 204" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "نعيمة موسى",
+            lectures: [
+              { day: "الأربعاء", time: "1:00 PM - 3:00 PM", location: "قاعة 203" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "مقدمة في شبكات الحاسوب",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "المبروك التمامي",
+            lectures: [
+              { day: "السبت", time: "9:00 AM - 11:00 AM", location: "قاعة 206" },
+              { day: "السبت", time: "11:00 AM - 1:00 PM", location: "قاعة 204" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "المبروك التمامي",
+            lectures: [
+              { day: "الأربعاء", time: "9:00 AM - 11:00 AM", location: "قاعة 204" },
+              { day: "الأربعاء", time: "11:00 AM - 1:00 PM", location: "قاعة 205" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "مشروع التخرج",
+        groups: [
+          {
+            name: "المجموعة 1",
+            doctor: "إيمان جبريل",
+            lectures: [
+              { day: "الثلاثاء", time: "3:00 PM - 5:00 PM", location: "أون لاين (3)" }
+            ]
+          },
+          {
+            name: "المجموعة 2",
+            doctor: "إيمان جبريل",
+            lectures: [
+              { day: "السبت", time: "3:00 PM - 5:00 PM", location: "أون لاين (1)" }
+            ]
+          },
+          {
+            name: "المجموعة 3",
+            doctor: "إيمان جبريل",
+            lectures: [
+              { day: "الأحد", time: "3:00 PM - 5:00 PM", location: "أون لاين (6)" }
+            ]
+          },
+          {
+            name: "المجموعة 4",
+            doctor: "نجاة أطبيقة",
+            lectures: [
+              { day: "الاثنين", time: "3:00 PM - 5:00 PM", location: "أون لاين (3)" }
+            ]
+          }
+        ]
+      }
+    ]
   }
 
 };
+
 };
