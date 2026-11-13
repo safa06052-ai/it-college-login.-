@@ -1102,5 +1102,3 @@ window.COLLEGE_COURSES = {
   }
 
 };
-
-};
