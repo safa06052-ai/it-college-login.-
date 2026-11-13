@@ -423,7 +423,7 @@ window.COLLEGE_COURSES = {
         ]
       }
     ]
-  }
+  },
   
   "الشبكات والاتصالات": {
     courses: [
