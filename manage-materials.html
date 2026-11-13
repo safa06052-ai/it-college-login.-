@@ -245,6 +245,7 @@ select:disabled{opacity:.6;cursor:not-allowed}
 <!-- تحميل Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
 <script>
 const SUPABASE_URL =
   "https://wteztoggppyksbdhpoxx.supabase.co";
@@ -256,11 +257,11 @@ const client = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
   {
-    auth:{
-      storage:window.sessionStorage,
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:true
+    auth: {
+      storage: window.sessionStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
     }
   }
 );
@@ -279,11 +280,32 @@ const courseHint = document.getElementById("courseHint");
 const NO_SEMESTER = "بدون فصل";
 
 let currentUser = null;
+let isAdmin = false;
 
 
-/* تحميل المواد من courses.js */
+/* إنشاء مساحة طلبات المناهج */
 
-function updateCourseOptions(){
+const requestsPanel = document.createElement("section");
+requestsPanel.className = "panel";
+requestsPanel.innerHTML = `
+  <h2 class="panel-title">
+    <i class="fa-solid fa-clipboard-check"></i>
+    <span id="requestsTitle">طلبات المناهج</span>
+  </h2>
+  <div id="requestsList" class="material-list">
+    <div class="empty">جاري تحميل الطلبات...</div>
+  </div>
+`;
+
+materialsList.closest(".panel").before(requestsPanel);
+
+const requestsList = document.getElementById("requestsList");
+const requestsTitle = document.getElementById("requestsTitle");
+
+
+/* تحديث قائمة المواد */
+
+function updateCourseOptions() {
 
   const department = departmentSelect.value;
   const isGeneral = department === "القسم العام";
@@ -291,7 +313,7 @@ function updateCourseOptions(){
   semesterField.style.display = isGeneral ? "grid" : "none";
   semesterSelect.disabled = !isGeneral;
 
-  if(!isGeneral){
+  if (!isGeneral) {
     semesterSelect.value = "";
   }
 
@@ -302,13 +324,13 @@ function updateCourseOptions(){
 
   courseSelect.disabled = true;
 
-  if(!department){
+  if (!department) {
     courseHint.textContent =
       "يرجى تحديد القسم لعرض المواد.";
     return;
   }
 
-  if(isGeneral && !semester){
+  if (isGeneral && !semester) {
     courseHint.textContent =
       "يرجى تحديد الفصل الدراسي لعرض المواد.";
     return;
@@ -319,7 +341,7 @@ function updateCourseOptions(){
 
   let availableCourses = [];
 
-  if(isGeneral){
+  if (isGeneral) {
 
     const semesterKey =
       semester === "الفصل الأول" ? "first" : "second";
@@ -327,14 +349,14 @@ function updateCourseOptions(){
     availableCourses =
       departmentData?.[semesterKey] || [];
 
-  }else{
+  } else {
 
     availableCourses =
       departmentData?.courses || departmentData?.third || [];
 
   }
 
-  if(availableCourses.length === 0){
+  if (!availableCourses.length) {
     courseHint.textContent =
       "لا توجد مواد مسجلة لهذا القسم حالياً.";
     return;
@@ -356,57 +378,98 @@ function updateCourseOptions(){
     "تم تحميل المواد. يرجى تحديد المادة المطلوبة.";
 }
 
-departmentSelect.addEventListener("change",updateCourseOptions);
-semesterSelect.addEventListener("change",updateCourseOptions);
+departmentSelect.addEventListener("change", updateCourseOptions);
+semesterSelect.addEventListener("change", updateCourseOptions);
 
 
 /* رسائل النظام */
 
-function showMessage(message,type){
+function showMessage(message, type) {
   uploadMessage.textContent = message;
   uploadMessage.className = "message " + type;
 }
 
 
+/* تجهيز الواجهة حسب نوع الحساب */
+
+function setupInterface() {
+
+  if (isAdmin) {
+
+    document.querySelector(".header p").textContent =
+      "إضافة المناهج الدراسية ومراجعة طلبات الطلبة وإدارة الملفات.";
+
+    uploadBtn.innerHTML =
+      '<i class="fa-solid fa-upload"></i> رفع المنهج مباشرة';
+
+    requestsTitle.textContent = "طلبات الطلبة للمراجعة";
+
+  } else {
+
+    document.querySelector(".header h1").innerHTML =
+      '<i class="fa-solid fa-book-open"></i> المناهج الدراسية';
+
+    document.querySelector(".header p").textContent =
+      "يمكنك إرسال ملفات المناهج الدراسية للمراجعة، وستظهر بعد موافقة الإدارة.";
+
+    document.querySelector(".panel-title").innerHTML =
+      '<i class="fa-solid fa-file-circle-plus"></i> إرسال منهج للمراجعة';
+
+    uploadBtn.innerHTML =
+      '<i class="fa-solid fa-paper-plane"></i> إرسال طلب المنهج';
+
+    requestsTitle.textContent = "طلباتي وحالة المراجعة";
+
+    const deleteText = document.querySelector(
+      ".panel:nth-of-type(2) .panel-title"
+    );
+
+    if (deleteText) {
+      deleteText.innerHTML =
+        '<i class="fa-solid fa-folder-open"></i> المناهج المعتمدة';
+    }
+  }
+
+}
+
+
 /* التحقق من الحساب والصلاحيات */
 
-async function initialize(){
+async function initialize() {
 
-  const {data,error} = await client.auth.getSession();
+  const { data, error } = await client.auth.getSession();
 
-  if(error || !data.session){
+  if (error || !data.session) {
     window.location.replace("./index.html");
     return;
   }
 
   currentUser = data.session.user;
 
-  const {data:roleData,error:roleError} = await client
+  const { data: roleData, error: roleError } = await client
     .from("user_roles")
     .select("role")
-    .eq("user_id",currentUser.id)
+    .eq("user_id", currentUser.id)
     .maybeSingle();
 
-if(roleError){
-  alert(
-    "الخطأ: " + roleError.message +
-    "\nالكود: " + roleError.code
-  );
-  return;
-}
-  if(!roleData || roleData.role !== "admin"){
-    alert("هذه الصفحة مخصصة لحساب الإدارة فقط.");
-    window.location.replace("./dashboard.html");
+  if (roleError) {
+    alert("تعذر التحقق من الصلاحيات: " + roleError.message);
     return;
   }
 
+  isAdmin = roleData?.role === "admin";
+
+  setupInterface();
+
   await loadMaterials();
+  await loadRequests();
+
 }
 
 
-/* رفع المنهج */
+/* إرسال أو رفع المنهج */
 
-form.addEventListener("submit",async function(event){
+form.addEventListener("submit", async function(event) {
 
   event.preventDefault();
 
@@ -417,15 +480,19 @@ form.addEventListener("submit",async function(event){
     : NO_SEMESTER;
 
   const courseName = courseSelect.value;
-  const fileTitle = document.getElementById("fileTitle").value.trim();
-  const file = document.getElementById("pdfFile").files[0];
 
-  if(
+  const fileTitle =
+    document.getElementById("fileTitle").value.trim();
+
+  const file =
+    document.getElementById("pdfFile").files[0];
+
+  if (
     !department ||
     (department === "القسم العام" && !semester) ||
     !courseName ||
     !fileTitle
-  ){
+  ) {
     showMessage(
       "يرجى تحديد القسم والمادة واستكمال البيانات المطلوبة.",
       "error"
@@ -433,121 +500,144 @@ form.addEventListener("submit",async function(event){
     return;
   }
 
-  if(!file){
-    showMessage("يرجى تحديد ملف PDF أولاً.","error");
+  if (!file) {
+    showMessage("يرجى تحديد ملف PDF أولاً.", "error");
     return;
   }
 
-  if(file.type !== "application/pdf" &&
-     !file.name.toLowerCase().endsWith(".pdf")){
-    showMessage("يسمح برفع ملفات PDF فقط.","error");
+  if (
+    file.type !== "application/pdf" &&
+    !file.name.toLowerCase().endsWith(".pdf")
+  ) {
+    showMessage("يسمح برفع ملفات PDF فقط.", "error");
     return;
   }
 
-  if(file.size > 50 * 1024 * 1024){
-    showMessage("حجم الملف أكبر من 50 ميجابايت.","error");
+  if (file.size > 50 * 1024 * 1024) {
+    showMessage("حجم الملف أكبر من 50 ميجابايت.", "error");
     return;
   }
 
   uploadBtn.disabled = true;
+
   uploadBtn.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع...';
+    '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...';
 
   let storagePath = null;
 
-  try{
+  const bucket = isAdmin
+    ? "course-materials"
+    : "course-material-requests";
 
-    storagePath = currentUser.id + "/" +
-      crypto.randomUUID() + ".pdf";
+  try {
 
-    const {error:storageError} = await client.storage
-      .from("course-materials")
-      .upload(storagePath,file,{
-        contentType:"application/pdf",
-        upsert:false
+    storagePath =
+      currentUser.id + "/" + crypto.randomUUID() + ".pdf";
+
+    const { error: storageError } = await client.storage
+      .from(bucket)
+      .upload(storagePath, file, {
+        contentType: "application/pdf",
+        upsert: false
       });
 
-    if(storageError) throw storageError;
+    if (storageError) throw storageError;
 
-    const {error:dbError} = await client
-      .from("course_materials")
-      .insert({
-        department:department,
-        semester:semester,
-        course_name:courseName,
-        file_name:fileTitle,
-        storage_path:storagePath,
-        uploaded_by:currentUser.id
-      });
+    const tableName = isAdmin
+      ? "course_materials"
+      : "course_material_requests";
 
-    if(dbError){
+    const record = {
+      department: department,
+      semester: semester,
+      course_name: courseName,
+      file_name: fileTitle,
+      storage_path: storagePath,
+      uploaded_by: currentUser.id
+    };
+
+    const { error: dbError } = await client
+      .from(tableName)
+      .insert(record);
+
+    if (dbError) {
 
       await client.storage
-        .from("course-materials")
+        .from(bucket)
         .remove([storagePath]);
 
       throw dbError;
     }
 
-    showMessage("تم رفع المنهج بنجاح.","success");
+    if (isAdmin) {
+      showMessage("تم رفع المنهج واعتماده بنجاح.", "success");
+    } else {
+      showMessage(
+        "تم إرسال المنهج بنجاح. سيظهر بعد مراجعة الإدارة والموافقة عليه.",
+        "success"
+      );
+    }
 
     form.reset();
     updateCourseOptions();
 
     await loadMaterials();
+    await loadRequests();
 
-  }catch(error){
+  } catch (error) {
 
     console.error(error);
 
     showMessage(
-      "تعذر رفع الملف: " + error.message,
+      "تعذر إتمام العملية: " + error.message,
       "error"
     );
 
-  }finally{
+  } finally {
 
     uploadBtn.disabled = false;
 
-    uploadBtn.innerHTML =
-      '<i class="fa-solid fa-upload"></i> رفع المنهج';
+    uploadBtn.innerHTML = isAdmin
+      ? '<i class="fa-solid fa-upload"></i> رفع المنهج مباشرة'
+      : '<i class="fa-solid fa-paper-plane"></i> إرسال طلب المنهج';
 
   }
 
 });
 
 
-/* تحميل الملفات المرفوعة */
+/* تحميل المناهج المعتمدة */
 
-async function loadMaterials(){
+async function loadMaterials() {
 
   materialsList.innerHTML = `
     <div class="empty">
       <i class="fa-solid fa-spinner fa-spin"></i>
-      جاري تحميل الملفات...
+      جاري تحميل المناهج...
     </div>
   `;
 
-  const {data,error} = await client
+  const { data, error } = await client
     .from("course_materials")
     .select("*")
-    .order("created_at",{ascending:false});
+    .order("created_at", { ascending: false });
 
-  if(error){
+  if (error) {
 
     materialsList.innerHTML =
-      '<div class="empty">تعذر تحميل الملفات.</div>';
+      '<div class="empty">تعذر تحميل المناهج: ' +
+      error.message + '</div>';
 
     console.error(error);
     return;
   }
 
-  if(!data || data.length === 0){
+  if (!data || data.length === 0) {
 
     materialsList.innerHTML = `
       <div class="empty">
         <i class="fa-solid fa-folder-open"></i>
-        لا توجد مناهج مرفوعة حتى الآن.
+        لا توجد مناهج معتمدة حتى الآن.
       </div>
     `;
 
@@ -556,7 +646,7 @@ async function loadMaterials(){
 
   materialsList.innerHTML = "";
 
-  data.forEach(material=>{
+  for (const material of data) {
 
     const item = document.createElement("div");
     item.className = "material-item";
@@ -574,73 +664,323 @@ async function loadMaterials(){
 
     const details = document.createElement("small");
 
-    if(material.department === "القسم العام"){
+    details.textContent =
+      material.department +
+      (material.department === "القسم العام"
+        ? " — " + material.semester
+        : "") +
+      " — " + material.course_name;
 
-      details.textContent =
-        material.department + " — " +
-        material.semester + " — " +
-        material.course_name;
+    info.append(title, details);
 
-    }else{
+    const openBtn = document.createElement("button");
+    openBtn.type = "button";
+    openBtn.className = "primary-btn";
+    openBtn.style.width = "auto";
+    openBtn.style.marginTop = "0";
+    openBtn.style.padding = "9px 12px";
+    openBtn.innerHTML =
+      '<i class="fa-solid fa-eye"></i> عرض';
 
-      details.textContent =
-        material.department + " — " +
-        material.course_name;
+    openBtn.addEventListener("click", async () => {
+
+      openBtn.disabled = true;
+
+      const { data: fileData, error: fileError } =
+        await client.storage
+          .from("course-materials")
+          .createSignedUrl(material.storage_path, 60);
+
+      openBtn.disabled = false;
+
+      if (fileError) {
+        alert("تعذر فتح الملف: " + fileError.message);
+        return;
+      }
+
+      window.open(fileData.signedUrl, "_blank");
+
+    });
+
+    item.append(icon, info, openBtn);
+
+    if (isAdmin) {
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-btn";
+      deleteBtn.type = "button";
+      deleteBtn.innerHTML =
+        '<i class="fa-solid fa-trash"></i> حذف';
+
+      deleteBtn.addEventListener("click", () => {
+        deleteMaterial(material, deleteBtn);
+      });
+
+      item.appendChild(deleteBtn);
 
     }
 
-    info.append(title,details);
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn";
-    deleteBtn.type = "button";
-    deleteBtn.innerHTML =
-      '<i class="fa-solid fa-trash"></i> حذف';
-
-    deleteBtn.addEventListener("click",()=>{
-      deleteMaterial(material,deleteBtn);
-    });
-
-    item.append(icon,info,deleteBtn);
     materialsList.appendChild(item);
+
+  }
+
+}
+
+
+/* تحميل طلبات المناهج */
+
+async function loadRequests() {
+
+  requestsList.innerHTML =
+    '<div class="empty">جاري تحميل الطلبات...</div>';
+
+  let query = client
+    .from("course_material_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (!isAdmin) {
+    query = query.eq("uploaded_by", currentUser.id);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+
+    requestsList.innerHTML =
+      '<div class="empty">تعذر تحميل الطلبات: ' +
+      error.message + '</div>';
+
+    console.error(error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+
+    requestsList.innerHTML = `
+      <div class="empty">
+        <i class="fa-solid fa-inbox"></i>
+        لا توجد طلبات حتى الآن.
+      </div>
+    `;
+
+    return;
+  }
+
+  requestsList.innerHTML = "";
+
+  data.forEach(request => {
+
+    const item = document.createElement("div");
+    item.className = "material-item";
+
+    const icon = document.createElement("div");
+    icon.className = "pdf-icon";
+    icon.innerHTML =
+      '<i class="fa-solid fa-file-pdf"></i>';
+
+    const info = document.createElement("div");
+    info.className = "material-info";
+
+    const title = document.createElement("strong");
+    title.textContent = request.file_name;
+
+    const details = document.createElement("small");
+
+    details.textContent =
+      request.department +
+      (request.department === "القسم العام"
+        ? " — " + request.semester
+        : "") +
+      " — " + request.course_name;
+
+    const status = document.createElement("small");
+
+    if (request.status === "pending") {
+      status.textContent = "الحالة: قيد المراجعة";
+      status.style.color = "#ffd78a";
+    } else if (request.status === "approved") {
+      status.textContent = "الحالة: تمت الموافقة";
+      status.style.color = "#9dffe0";
+    } else {
+      status.textContent = "الحالة: مرفوض";
+      status.style.color = "#ffc1d8";
+    }
+
+    info.append(title, details, status);
+
+    if (request.admin_note) {
+      const note = document.createElement("small");
+      note.textContent = "ملاحظة الإدارة: " + request.admin_note;
+      info.appendChild(note);
+    }
+
+    item.append(icon, info);
+
+    if (isAdmin && request.status === "pending") {
+
+      const approveBtn = document.createElement("button");
+      approveBtn.className = "primary-btn";
+      approveBtn.type = "button";
+      approveBtn.style.width = "auto";
+      approveBtn.style.marginTop = "0";
+      approveBtn.style.padding = "9px 12px";
+      approveBtn.innerHTML =
+        '<i class="fa-solid fa-check"></i> موافقة';
+
+      approveBtn.addEventListener("click", () => {
+        reviewRequest(request, "approved", approveBtn);
+      });
+
+      const rejectBtn = document.createElement("button");
+      rejectBtn.className = "delete-btn";
+      rejectBtn.type = "button";
+      rejectBtn.innerHTML =
+        '<i class="fa-solid fa-xmark"></i> رفض';
+
+      rejectBtn.addEventListener("click", () => {
+        reviewRequest(request, "rejected", rejectBtn);
+      });
+
+      item.append(approveBtn, rejectBtn);
+
+    }
+
+    requestsList.appendChild(item);
 
   });
 
 }
 
 
-/* حذف المنهج */
+/* موافقة الإدارة أو رفض الطلب */
 
-async function deleteMaterial(material,button){
+async function reviewRequest(request, decision, button) {
 
-  const confirmed = confirm(
-    "تأكيد حذف هذا المنهج؟"
-  );
+  if (!isAdmin) return;
 
-  if(!confirmed) return;
+  const message = decision === "approved"
+    ? "هل تريد الموافقة على هذا المنهج ونشره للطلبة؟"
+    : "هل تريد رفض هذا الطلب؟";
+
+  if (!confirm(message)) return;
 
   button.disabled = true;
 
-  try{
+  try {
 
-    const {error:storageError} = await client.storage
+    if (decision === "approved") {
+
+      /* تنزيل الملف من مخزن الطلبات */
+
+      const { data: fileData, error: downloadError } =
+        await client.storage
+          .from("course-material-requests")
+          .download(request.storage_path);
+
+      if (downloadError) throw downloadError;
+
+      /* نقله إلى مخزن المناهج المعتمدة */
+
+      const approvedPath =
+        currentUser.id + "/" + crypto.randomUUID() + ".pdf";
+
+      const { error: uploadError } = await client.storage
+        .from("course-materials")
+        .upload(approvedPath, fileData, {
+          contentType: "application/pdf",
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      /* إضافة المنهج إلى القائمة المعتمدة */
+
+      const { error: insertError } = await client
+        .from("course_materials")
+        .insert({
+          department: request.department,
+          semester: request.semester,
+          course_name: request.course_name,
+          file_name: request.file_name,
+          storage_path: approvedPath,
+          uploaded_by: request.uploaded_by
+        });
+
+      if (insertError) {
+
+        await client.storage
+          .from("course-materials")
+          .remove([approvedPath]);
+
+        throw insertError;
+      }
+
+    }
+
+    /* تحديث حالة الطلب */
+
+    const { error: updateError } = await client
+      .from("course_material_requests")
+      .update({
+        status: decision,
+        reviewed_by: currentUser.id,
+        reviewed_at: new Date().toISOString()
+      })
+      .eq("id", request.id);
+
+    if (updateError) throw updateError;
+
+    alert(
+      decision === "approved"
+        ? "تمت الموافقة ونشر المنهج بنجاح."
+        : "تم رفض الطلب."
+    );
+
+    await loadRequests();
+    await loadMaterials();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("تعذرت مراجعة الطلب: " + error.message);
+
+    button.disabled = false;
+
+  }
+
+}
+
+
+/* حذف منهج معتمد - للإدارة فقط */
+
+async function deleteMaterial(material, button) {
+
+  if (!isAdmin) return;
+
+  if (!confirm("تأكيد حذف هذا المنهج؟")) return;
+
+  button.disabled = true;
+
+  try {
+
+    const { error: storageError } = await client.storage
       .from("course-materials")
       .remove([material.storage_path]);
 
-    if(storageError) throw storageError;
+    if (storageError) throw storageError;
 
-    const {error:dbError} = await client
+    const { error: dbError } = await client
       .from("course_materials")
       .delete()
-      .eq("id",material.id);
+      .eq("id", material.id);
 
-    if(dbError){
-      throw dbError;
-    }
+    if (dbError) throw dbError;
 
     await loadMaterials();
 
-  }catch(error){
+  } catch (error) {
 
     console.error(error);
 
@@ -652,7 +992,11 @@ async function deleteMaterial(material,button){
 
 }
 
+
+/* بدء الصفحة */
+
 initialize();
+
 </script>
 </body>
 </html>
