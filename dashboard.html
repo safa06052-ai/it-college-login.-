@@ -10,6 +10,39 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
+  .course-search {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.course-search i {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cyan);
+}
+
+.course-search input {
+  width: 100%;
+  padding: 12px 42px 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #111832;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.course-search input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(82,239,255,.08);
+}
+
+.course-search input::placeholder {
+  color: var(--muted);
+}
 :root {
   --bg:#080b19;
   --purple:#9367ff;
