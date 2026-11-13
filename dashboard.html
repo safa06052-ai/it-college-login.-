@@ -964,6 +964,7 @@ function renderCourses(subtitle) {
     courseDetails.querySelector(".details-title").textContent = title;
     return;
   }
+    
 
   // دعم المحاضرات المتعددة لنفس المجموعة
   const lectures = course.lectures || [];
@@ -971,9 +972,7 @@ function renderCourses(subtitle) {
   const timesHTML = lectures.length
     ? lectures.map(lecture => `
         <div class="lecture-time">
-          <strong>${lecture.day}</strong><br>
-          ${lecture.time}<br>
-          ${lecture.location}
+          ${lecture.time || "غير محدد"}
         </div>
       `).join("")
     : (course.times || []).map(time => `
