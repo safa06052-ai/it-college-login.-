@@ -1154,14 +1154,21 @@ document.querySelectorAll("[data-semester]").forEach(button => {
 
 });
 
-
-/* الرجوع من المواد إلى الفصول */
+/* الرجوع من المواد */
 
 backHome.addEventListener("click", () => {
 
   if (currentDepartment === "القسم العام") {
 
     showSemesters();
+
+  } else if (
+    currentDepartment === "علوم الحاسوب" ||
+    currentDepartment === "الأمن السيبراني" ||
+    currentDepartment === "الذكاء الاصطناعي"
+  ) {
+
+    showComputerScience();
 
   } else {
 
