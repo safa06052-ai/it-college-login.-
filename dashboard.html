@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -420,9 +419,8 @@ a{color:inherit;text-decoration:none}
   .footer{letter-spacing:1px;padding-top:26px}
 }
 </style>
-</head>
-
-<body>
+</head> 
+  <body>
 <div class="app">
 
 <aside class="sidebar">
@@ -734,16 +732,32 @@ function showSemesters() {
 
 function showDepartment(name) {
 
-  if (name === "القسم العام") {
+  const departmentCourses =
+    window.COLLEGE_COURSES &&
+    window.COLLEGE_COURSES[name];
 
-    currentDepartment = name;
-    showSemesters();
+  if (!departmentCourses) {
+    alert("بيانات هذا القسم لم تُضف بعد.");
     return;
-
   }
 
-  alert("بيانات هذا القسم لم تُضف بعد.");
+  currentDepartment = name;
 
+  // القسم العام يظل مقسماً إلى فصلين
+  if (name === "القسم العام") {
+    showSemesters();
+    return;
+  }
+
+  // الأقسام التي لا تحتوي على فصول تعرض موادها مباشرة
+  if (Array.isArray(departmentCourses.courses)) {
+    currentSemester = "";
+    currentCourses = departmentCourses.courses;
+    renderCourses("المقررات الدراسية — جميع المواد");
+    return;
+  }
+
+  alert("بيانات هذا القسم غير مكتملة.");
 }
 
 
@@ -763,26 +777,21 @@ function showSemester(semester) {
   }
 
   if (semester === "first") {
-
     currentCourses = departmentCourses.first || [];
-
-    semesterSubtitle.textContent =
-      "المقررات الدراسية — الفصل الدراسي الأول";
-
+    renderCourses("المقررات الدراسية — الفصل الدراسي الأول");
   } else if (semester === "second") {
-
     currentCourses = departmentCourses.second || [];
-
-    semesterSubtitle.textContent =
-      "المقررات الدراسية — الفصل الدراسي الثاني";
-
-  } else {
-
-    return;
-
+    renderCourses("المقررات الدراسية — الفصل الدراسي الثاني");
   }
+}
+
+
+/* عرض قائمة المواد */
+
+function renderCourses(subtitle) {
 
   departmentTitle.textContent = currentDepartment;
+  semesterSubtitle.textContent = subtitle;
 
   courseList.innerHTML = "";
 
@@ -795,65 +804,53 @@ function showSemester(semester) {
   `;
 
   if (currentCourses.length === 0) {
-
     courseList.innerHTML = `
       <div class="empty-details">
         <i class="fa-solid fa-book-open"></i>
         <h3>لا توجد مواد مضافة حالياً</h3>
-        <p>ستتم إضافة المواد لهذا الفصل لاحقاً.</p>
+        <p>ستتم إضافة المواد لاحقاً.</p>
       </div>
     `;
-
   }
 
-  currentCourses.forEach((course,index) => {
+  currentCourses.forEach((course, index) => {
 
     const button = document.createElement("button");
-
     button.type = "button";
     button.className = "course-item";
 
     button.innerHTML = `
       <span class="course-number">
-        ${String(index+1).padStart(2,"0")}
+        ${String(index + 1).padStart(2, "0")}
       </span>
       <span class="course-name"></span>
       <i class="fa-solid fa-chevron-left"></i>
     `;
 
-    button.querySelector(".course-name").textContent =
-      course.name;
+    button.querySelector(".course-name").textContent = course.name;
 
     button.addEventListener("click", () => {
-
       document.querySelectorAll(".course-item").forEach(item => {
         item.classList.remove("selected");
       });
 
       button.classList.add("selected");
-
       showCourseDetails(course);
-
     });
 
     courseList.appendChild(button);
-
   });
 
-  semesterView.style.display = "none";
   homeView.style.display = "none";
+  semesterView.style.display = "none";
   coursesView.style.display = "block";
 
-  window.scrollTo({top:0,behavior:"smooth"});
-
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 
 /* عرض تفاصيل المادة */
-
-
-
-function showCourseDetails(course) {
+  function showCourseDetails(course) {
 
   // عنوان المادة
   const title = course.name || "المادة الدراسية";
@@ -1036,9 +1033,6 @@ function showCourseDetails(course) {
       ? lectures.map(item => item.location).join(" و ")
       : course.location || "لم يحدد بعد";
 }
-
-
-  
 
 
 /* أزرار دخول الأقسام */
