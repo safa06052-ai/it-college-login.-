@@ -182,7 +182,7 @@ select:disabled{opacity:.6;cursor:not-allowed}
         </select>
       </div>
 
-      <div class="field">
+      <div class="field" id="semesterField">
         <label for="semester">الفصل الدراسي</label>
         <select id="semester" required>
           <option value="">تحديد الفصل الدراسي</option>
@@ -197,7 +197,7 @@ select:disabled{opacity:.6;cursor:not-allowed}
           <option value="">تحديد المادة</option>
         </select>
         <span class="hint" id="courseHint">
-          يرجى تحديد القسم والفصل الدراسي لعرض المواد.
+          يرجى تحديد القسم لعرض المواد.
         </span>
       </div>
 
@@ -209,7 +209,7 @@ select:disabled{opacity:.6;cursor:not-allowed}
       <div class="field full">
         <label for="pdfFile">اختيار ملف PDF</label>
         <input id="pdfFile" type="file" accept=".pdf,application/pdf" required>
-       <span class="hint">الملفات بصيغة PDF فقط، والحد الأقصى لحجم الملف 50 ميجابايت.</span>
+        <span class="hint">الملفات بصيغة PDF فقط، والحد الأقصى لحجم الملف 50 ميجابايت.</span>
       </div>
 
     </div>
@@ -250,7 +250,7 @@ const SUPABASE_URL =
   "https://wteztoggppyksbdhpoxx.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
+  "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_N";
 
 const client = window.supabase.createClient(
   SUPABASE_URL,
@@ -272,15 +272,29 @@ const materialsList = document.getElementById("materialsList");
 
 const departmentSelect = document.getElementById("department");
 const semesterSelect = document.getElementById("semester");
+const semesterField = document.getElementById("semesterField");
 const courseSelect = document.getElementById("courseName");
 const courseHint = document.getElementById("courseHint");
 
+const NO_SEMESTER = "بدون فصل";
+
 let currentUser = null;
 
-/* تحميل المواد تلقائياً من courses.js */
+
+/* تحميل المواد من courses.js */
+
 function updateCourseOptions(){
 
   const department = departmentSelect.value;
+  const isGeneral = department === "القسم العام";
+
+  semesterField.style.display = isGeneral ? "grid" : "none";
+  semesterSelect.disabled = !isGeneral;
+
+  if(!isGeneral){
+    semesterSelect.value = "";
+  }
+
   const semester = semesterSelect.value;
 
   courseSelect.innerHTML =
@@ -288,31 +302,45 @@ function updateCourseOptions(){
 
   courseSelect.disabled = true;
 
-  if(!department || !semester){
+  if(!department){
     courseHint.textContent =
-      "يرجى تحديد القسم والفصل الدراسي لعرض المواد.";
+      "يرجى تحديد القسم لعرض المواد.";
     return;
   }
 
-  if(department !== "القسم العام"){
+  if(isGeneral && !semester){
     courseHint.textContent =
-      "قائمة المواد متاحة حاليًا للقسم العام فقط.";
+      "يرجى تحديد الفصل الدراسي لعرض المواد.";
     return;
   }
 
-  const semesterKey =
-    semester === "الفصل الأول" ? "first" : "second";
+  const departmentData =
+    window.COLLEGE_COURSES?.[department];
 
-  const courses =
-    window.COLLEGE_COURSES?.[department]?.[semesterKey] || [];
+  let availableCourses = [];
 
-  if(courses.length === 0){
+  if(isGeneral){
+
+    const semesterKey =
+      semester === "الفصل الأول" ? "first" : "second";
+
+    availableCourses =
+      departmentData?.[semesterKey] || [];
+
+  }else{
+
+    availableCourses =
+      departmentData?.courses || departmentData?.third || [];
+
+  }
+
+  if(availableCourses.length === 0){
     courseHint.textContent =
-      "لا توجد مواد مسجلة لهذا الفصل في ملف courses.js.";
+      "لا توجد مواد مسجلة لهذا القسم حالياً.";
     return;
   }
 
-  courses.forEach(course => {
+  availableCourses.forEach(course => {
 
     const option = document.createElement("option");
     option.value = course.name;
@@ -331,10 +359,16 @@ function updateCourseOptions(){
 departmentSelect.addEventListener("change",updateCourseOptions);
 semesterSelect.addEventListener("change",updateCourseOptions);
 
+
+/* رسائل النظام */
+
 function showMessage(message,type){
   uploadMessage.textContent = message;
   uploadMessage.className = "message " + type;
 }
+
+
+/* التحقق من الحساب والصلاحيات */
 
 async function initialize(){
 
@@ -368,18 +402,33 @@ async function initialize(){
   await loadMaterials();
 }
 
+
+/* رفع المنهج */
+
 form.addEventListener("submit",async function(event){
 
   event.preventDefault();
 
   const department = departmentSelect.value;
-  const semester = semesterSelect.value;
+
+  const semester = department === "القسم العام"
+    ? semesterSelect.value
+    : NO_SEMESTER;
+
   const courseName = courseSelect.value;
   const fileTitle = document.getElementById("fileTitle").value.trim();
   const file = document.getElementById("pdfFile").files[0];
 
-  if(!department || !semester || !courseName || !fileTitle){
-    showMessage("يرجى تحديد القسم والفصل والمادة واستكمال البيانات.","error");
+  if(
+    !department ||
+    (department === "القسم العام" && !semester) ||
+    !courseName ||
+    !fileTitle
+  ){
+    showMessage(
+      "يرجى تحديد القسم والمادة واستكمال البيانات المطلوبة.",
+      "error"
+    );
     return;
   }
 
@@ -395,12 +444,13 @@ form.addEventListener("submit",async function(event){
   }
 
   if(file.size > 50 * 1024 * 1024){
-  showMessage("حجم الملف أكبر من 50 ميجابايت.","error");
-  return;
-}
+    showMessage("حجم الملف أكبر من 50 ميجابايت.","error");
+    return;
+  }
 
   uploadBtn.disabled = true;
-  uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع...';
+  uploadBtn.innerHTML =
+    '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع...';
 
   let storagePath = null;
 
@@ -430,6 +480,7 @@ form.addEventListener("submit",async function(event){
       });
 
     if(dbError){
+
       await client.storage
         .from("course-materials")
         .remove([storagePath]);
@@ -447,17 +498,25 @@ form.addEventListener("submit",async function(event){
   }catch(error){
 
     console.error(error);
-    showMessage("تعذر رفع الملف: " + error.message,"error");
+
+    showMessage(
+      "تعذر رفع الملف: " + error.message,
+      "error"
+    );
 
   }finally{
 
     uploadBtn.disabled = false;
-    uploadBtn.innerHTML = '<i class="fa-solid fa-upload"></i> رفع المنهج';
+
+    uploadBtn.innerHTML =
+      '<i class="fa-solid fa-upload"></i> رفع المنهج';
 
   }
 
 });
 
+
+/* تحميل الملفات المرفوعة */
 
 async function loadMaterials(){
 
@@ -474,19 +533,23 @@ async function loadMaterials(){
     .order("created_at",{ascending:false});
 
   if(error){
+
     materialsList.innerHTML =
       '<div class="empty">تعذر تحميل الملفات.</div>';
+
     console.error(error);
     return;
   }
 
   if(!data || data.length === 0){
+
     materialsList.innerHTML = `
       <div class="empty">
         <i class="fa-solid fa-folder-open"></i>
         لا توجد مناهج مرفوعة حتى الآن.
       </div>
     `;
+
     return;
   }
 
@@ -499,7 +562,8 @@ async function loadMaterials(){
 
     const icon = document.createElement("div");
     icon.className = "pdf-icon";
-    icon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+    icon.innerHTML =
+      '<i class="fa-solid fa-file-pdf"></i>';
 
     const info = document.createElement("div");
     info.className = "material-info";
@@ -508,10 +572,21 @@ async function loadMaterials(){
     title.textContent = material.file_name;
 
     const details = document.createElement("small");
-    details.textContent =
-      material.department + " — " +
-      material.semester + " — " +
-      material.course_name;
+
+    if(material.department === "القسم العام"){
+
+      details.textContent =
+        material.department + " — " +
+        material.semester + " — " +
+        material.course_name;
+
+    }else{
+
+      details.textContent =
+        material.department + " — " +
+        material.course_name;
+
+    }
 
     info.append(title,details);
 
@@ -532,6 +607,8 @@ async function loadMaterials(){
 
 }
 
+
+/* حذف المنهج */
 
 async function deleteMaterial(material,button){
 
@@ -565,7 +642,9 @@ async function deleteMaterial(material,button){
   }catch(error){
 
     console.error(error);
+
     alert("تعذر حذف الملف: " + error.message);
+
     button.disabled = false;
 
   }
