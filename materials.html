@@ -9,7 +9,9 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./courses.js"></script>
 
 <style>
 :root {
@@ -280,6 +282,11 @@ select option {
   opacity:.85;
 }
 
+.action-btn:disabled {
+  opacity:.5;
+  cursor:wait;
+}
+
 .hidden {
   display:none !important;
 }
@@ -361,10 +368,12 @@ select option {
           <option value="هندسة البرمجيات">هندسة البرمجيات</option>
           <option value="الشبكات والاتصالات">الشبكات والاتصالات</option>
           <option value="علوم الحاسوب">علوم الحاسوب</option>
+          <option value="الأمن السيبراني">الأمن السيبراني</option>
+          <option value="الذكاء الاصطناعي">الذكاء الاصطناعي</option>
         </select>
       </div>
 
-      <div class="field">
+      <div class="field hidden" id="semesterField">
         <label for="semester">الفصل الدراسي</label>
         <select id="semester" disabled>
           <option value="">اختيار الفصل الدراسي</option>
@@ -374,7 +383,7 @@ select option {
         </select>
       </div>
 
-      <div class="field" style="grid-column:1/-1">
+      <div class="field" id="courseField" style="grid-column:1/-1">
         <label for="course">المادة الدراسية</label>
         <select id="course" disabled>
           <option value="">اختيار المادة الدراسية</option>
@@ -392,7 +401,7 @@ select option {
 
     <div id="status" class="status">
       <i class="fa-solid fa-book"></i>
-      يرجى تحديد القسم والفصل والمادة لعرض المناهج.
+      يرجى تحديد القسم والمادة لعرض المناهج.
     </div>
 
     <div id="materialList" class="material-list"></div>
@@ -401,6 +410,8 @@ select option {
 </div>
 
 <script>
+/* إعدادات Supabase */
+
 const SUPABASE_URL = "https://wteztoggppyksbdhpoxx.supabase.co";
 
 const SUPABASE_KEY = "sb_publishable_O2Crb-WTxmwaOn_uTZtnYQ_NdFz5K_x";
@@ -418,99 +429,218 @@ const client = window.supabase.createClient(
   }
 );
 
+
+/* عناصر الصفحة */
+
 const departmentSelect = document.getElementById("department");
 const semesterSelect = document.getElementById("semester");
+const semesterField = document.getElementById("semesterField");
 const courseSelect = document.getElementById("course");
 const statusBox = document.getElementById("status");
 const materialList = document.getElementById("materialList");
 
-const courses = {
-  "القسم العام": {
-    "الفصل الأول": [
-      "أساسيات تقنية المعلومات",
-      "برمجة 1",
-      "فيزياء عامة",
-      "رياضة 1",
-      "اللغة العربية",
-      "اللغة الإنجليزية"
-    ],
 
-    "الفصل الثاني": [
-      "رياضة 2",
-      "برمجة 2",
-      "ثقافة وطنية",
-      "إحصاء",
-      "برمجة نت",
-      "إنجليزي تقنية"
-    ]
-  },
+/* بيانات المواد من courses.js */
 
-  "هندسة البرمجيات": {},
-  "الشبكات والاتصالات": {},
-  "علوم الحاسوب": {}
-};
+const coursesData = window.COLLEGE_COURSES || {};
+
+const NO_SEMESTER = "بدون فصل";
+
+
+/* عرض الرسائل */
 
 function showStatus(message, icon = "fa-circle-info") {
   statusBox.classList.remove("hidden");
+
   statusBox.innerHTML = `
     <i class="fa-solid ${icon}"></i>
     ${message}
   `;
 }
 
+
+/* مسح الملفات */
+
 function clearMaterials() {
   materialList.innerHTML = "";
 }
 
+
+/* إعادة قائمة المواد */
+
 function resetCourse() {
   courseSelect.innerHTML =
     '<option value="">اختيار المادة الدراسية</option>';
+
   courseSelect.disabled = true;
 }
 
-function updateCourses() {
-  const department = departmentSelect.value;
-  const semester = semesterSelect.value;
 
+/* تحويل بيانات المواد إلى أسماء */
+
+function getCourseNames(items) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items
+    .map(item => {
+      if (typeof item === "string") {
+        return item;
+      }
+
+      return item?.name || "";
+    })
+    .filter(Boolean);
+}
+
+
+/* إضافة المواد إلى القائمة */
+
+function fillCourses(list) {
   resetCourse();
-  clearMaterials();
 
-  if (!department || !semester) {
-    showStatus("يرجى تحديد القسم والفصل والمادة لعرض المناهج.");
+  const names = getCourseNames(list);
+
+  if (names.length === 0) {
+    showStatus(
+      "لا توجد مواد مضافة لهذا القسم حالياً.",
+      "fa-clock"
+    );
     return;
   }
 
-  const availableCourses = courses[department]?.[semester] || [];
-
-  if (availableCourses.length === 0) {
-    showStatus("لا توجد مواد مضافة لهذا القسم حالياً.", "fa-clock");
-    return;
-  }
-
-  availableCourses.forEach(name => {
+  names.forEach(name => {
     const option = document.createElement("option");
+
     option.value = name;
     option.textContent = name;
+
     courseSelect.appendChild(option);
   });
 
   courseSelect.disabled = false;
+
   showStatus("يرجى اختيار المادة لعرض المناهج المتاحة.");
 }
 
-async function loadMaterials() {
+
+/* عند تغيير القسم */
+
+function updateDepartment() {
+  const department = departmentSelect.value;
+
+  semesterSelect.value = "";
+  semesterSelect.disabled = true;
+
+  resetCourse();
+  clearMaterials();
+
+  if (!department) {
+    semesterField.classList.add("hidden");
+
+    showStatus(
+      "يرجى تحديد القسم والمادة لعرض المناهج."
+    );
+
+    return;
+  }
+
+  const departmentData = coursesData[department];
+
+  if (!departmentData) {
+    showStatus(
+      "تعذر العثور على بيانات هذا القسم. تأكدي من ملف courses.js.",
+      "fa-triangle-exclamation"
+    );
+    return;
+  }
+
+  /* القسم العام: اختيار الفصل أولاً */
+
+  if (department === "القسم العام") {
+    semesterField.classList.remove("hidden");
+
+    semesterSelect.disabled = false;
+
+    showStatus("يرجى اختيار الفصل الدراسي.");
+
+    return;
+  }
+
+  /* بقية الأقسام: عرض المواد مباشرة */
+
+  semesterField.classList.add("hidden");
+
+  const availableCourses =
+    departmentData.courses || departmentData.third || [];
+
+  fillCourses(availableCourses);
+}
+
+
+/* عند تغيير الفصل للقسم العام */
+
+function updateSemester() {
   const department = departmentSelect.value;
   const semester = semesterSelect.value;
+
+  clearMaterials();
+  resetCourse();
+
+  if (department !== "القسم العام" || !semester) {
+    showStatus("يرجى اختيار الفصل الدراسي.");
+    return;
+  }
+
+  let semesterKey = "";
+
+  if (semester === "الفصل الأول") {
+    semesterKey = "first";
+  } else if (semester === "الفصل الثاني") {
+    semesterKey = "second";
+  } else {
+    showStatus(
+      "لا توجد مواد مضافة للفصل الصيفي حالياً.",
+      "fa-clock"
+    );
+    return;
+  }
+
+  const departmentData = coursesData["القسم العام"];
+
+  const availableCourses = departmentData?.[semesterKey] || [];
+
+  fillCourses(availableCourses);
+}
+
+
+/* تحميل المناهج من قاعدة البيانات */
+
+async function loadMaterials() {
+  const department = departmentSelect.value;
   const course = courseSelect.value;
+
+  const semester = department === "القسم العام"
+    ? semesterSelect.value
+    : NO_SEMESTER;
 
   clearMaterials();
 
-  if (!department || !semester || !course) {
+  if (!department || !course) {
     showStatus("يرجى اختيار المادة لعرض المناهج.");
     return;
   }
 
-  showStatus("جاري تحميل المناهج الدراسية...", "fa-spinner fa-spin");
+  if (department === "القسم العام" && !semester) {
+    showStatus("يرجى اختيار الفصل الدراسي.");
+    return;
+  }
+
+  showStatus(
+    "جاري تحميل المناهج الدراسية...",
+    "fa-spinner fa-spin"
+  );
 
   const { data, error } = await client
     .from("course_materials")
@@ -522,82 +652,129 @@ async function loadMaterials() {
 
   if (error) {
     console.error("Materials error:", error);
-    showStatus("تعذر تحميل المناهج. يرجى التحقق من الاتصال بقاعدة البيانات.", "fa-triangle-exclamation");
+
+    showStatus(
+      "تعذر تحميل المناهج. يرجى التحقق من الاتصال بقاعدة البيانات.",
+      "fa-triangle-exclamation"
+    );
+
     return;
   }
 
   if (!data || data.length === 0) {
-    showStatus("لم تتم إضافة مناهج لهذه المادة بعد.", "fa-folder-open");
+    showStatus(
+      "لم تتم إضافة مناهج لهذه المادة بعد.",
+      "fa-folder-open"
+    );
+
     return;
   }
 
   statusBox.classList.add("hidden");
 
   for (const file of data) {
-    const card = document.createElement("div");
-    card.className = "material-card";
+    createMaterialCard(file, department);
+  }
+}
 
-    const info = document.createElement("div");
-    info.className = "file-info";
 
-    const icon = document.createElement("div");
-    icon.className = "pdf-icon";
-    icon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+/* إنشاء بطاقة المنهج */
 
-    const textBox = document.createElement("div");
+function createMaterialCard(file, department) {
+  const card = document.createElement("div");
+  card.className = "material-card";
 
-    const name = document.createElement("div");
-    name.className = "file-name";
-    name.textContent = file.file_name;
+  const info = document.createElement("div");
+  info.className = "file-info";
 
-    const details = document.createElement("div");
-    details.className = "file-details";
-    details.textContent = file.course_name + " • " + file.semester;
+  const icon = document.createElement("div");
+  icon.className = "pdf-icon";
+  icon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
 
-    textBox.appendChild(name);
-    textBox.appendChild(details);
+  const textBox = document.createElement("div");
 
-    info.appendChild(icon);
-    info.appendChild(textBox);
+  const name = document.createElement("div");
+  name.className = "file-name";
+  name.textContent = file.file_name || "ملف المنهج";
 
-    const actions = document.createElement("div");
-    actions.className = "actions";
+  const details = document.createElement("div");
+  details.className = "file-details";
 
-    const previewButton = document.createElement("button");
-    previewButton.className = "action-btn preview";
-    previewButton.innerHTML = '<i class="fa-solid fa-eye"></i> فتح المنهج';
-    previewButton.type = "button";
+  if (department === "القسم العام") {
+    details.textContent =
+      file.course_name + " • " + file.semester;
+  } else {
+    details.textContent =
+      file.department + " • " + file.course_name;
+  }
 
-    const downloadButton = document.createElement("button");
-    downloadButton.className = "action-btn download";
-    downloadButton.innerHTML = '<i class="fa-solid fa-download"></i> تنزيل';
-    downloadButton.type = "button";
+  textBox.appendChild(name);
+  textBox.appendChild(details);
 
-    previewButton.addEventListener("click", async () => {
-      previewButton.disabled = true;
-      previewButton.textContent = "جاري التجهيز...";
+  info.appendChild(icon);
+  info.appendChild(textBox);
 
+  const actions = document.createElement("div");
+  actions.className = "actions";
+
+
+  /* زر فتح المنهج */
+
+  const previewButton = document.createElement("button");
+
+  previewButton.className = "action-btn preview";
+  previewButton.innerHTML =
+    '<i class="fa-solid fa-eye"></i> فتح المنهج';
+
+  previewButton.type = "button";
+
+  previewButton.addEventListener("click", async () => {
+    previewButton.disabled = true;
+    previewButton.textContent = "جاري التجهيز...";
+
+    try {
       const { data: signed, error: signedError } = await client
         .storage
         .from("course-materials")
         .createSignedUrl(file.storage_path, 3600);
 
-      previewButton.disabled = false;
-      previewButton.innerHTML = '<i class="fa-solid fa-eye"></i> فتح المنهج';
-
       if (signedError || !signed?.signedUrl) {
-        alert("تعذر فتح الملف. يرجى المحاولة مرة أخرى.");
         console.error(signedError);
+
+        alert("تعذر فتح الملف. يرجى المحاولة مرة أخرى.");
         return;
       }
 
       window.open(signed.signedUrl, "_blank");
-    });
 
-    downloadButton.addEventListener("click", async () => {
-      downloadButton.disabled = true;
-      downloadButton.textContent = "جاري التجهيز...";
+    } catch (error) {
+      console.error(error);
+      alert("حدث خطأ أثناء فتح الملف.");
 
+    } finally {
+      previewButton.disabled = false;
+
+      previewButton.innerHTML =
+        '<i class="fa-solid fa-eye"></i> فتح المنهج';
+    }
+  });
+
+
+  /* زر تنزيل المنهج */
+
+  const downloadButton = document.createElement("button");
+
+  downloadButton.className = "action-btn download";
+  downloadButton.innerHTML =
+    '<i class="fa-solid fa-download"></i> تنزيل';
+
+  downloadButton.type = "button";
+
+  downloadButton.addEventListener("click", async () => {
+    downloadButton.disabled = true;
+    downloadButton.textContent = "جاري التجهيز...";
+
+    try {
       const { data: signed, error: signedError } = await client
         .storage
         .from("course-materials")
@@ -605,64 +782,90 @@ async function loadMaterials() {
           download: file.file_name
         });
 
-      downloadButton.disabled = false;
-      downloadButton.innerHTML = '<i class="fa-solid fa-download"></i> تنزيل';
-
       if (signedError || !signed?.signedUrl) {
-        alert("تعذر تنزيل الملف. يرجى المحاولة مرة أخرى.");
         console.error(signedError);
+
+        alert("تعذر تنزيل الملف. يرجى المحاولة مرة أخرى.");
         return;
       }
 
       const link = document.createElement("a");
+
       link.href = signed.signedUrl;
       link.download = file.file_name;
       link.target = "_blank";
+
       document.body.appendChild(link);
       link.click();
       link.remove();
-    });
 
-    actions.appendChild(previewButton);
-    actions.appendChild(downloadButton);
+    } catch (error) {
+      console.error(error);
+      alert("حدث خطأ أثناء تنزيل الملف.");
 
-    card.appendChild(info);
-    card.appendChild(actions);
+    } finally {
+      downloadButton.disabled = false;
 
-    materialList.appendChild(card);
-  }
+      downloadButton.innerHTML =
+        '<i class="fa-solid fa-download"></i> تنزيل';
+    }
+  });
+
+
+  actions.appendChild(previewButton);
+  actions.appendChild(downloadButton);
+
+  card.appendChild(info);
+  card.appendChild(actions);
+
+  materialList.appendChild(card);
 }
+
+
+/* التحقق من تسجيل الدخول */
 
 async function initializeMaterials() {
-  showStatus("جاري التحقق من تسجيل الدخول...", "fa-spinner fa-spin");
+  showStatus(
+    "جاري التحقق من تسجيل الدخول...",
+    "fa-spinner fa-spin"
+  );
 
-  const { data, error } = await client.auth.getSession();
+  try {
+    const { data, error } = await client.auth.getSession();
 
-  if (error || !data.session) {
-    window.location.href = "./index.html";
-    return;
+    if (error || !data.session) {
+      window.location.href = "./index.html";
+      return;
+    }
+
+    showStatus(
+      "يرجى تحديد القسم والمادة لعرض المناهج."
+    );
+
+  } catch (error) {
+    console.error(error);
+
+    showStatus(
+      "تعذر الاتصال. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
+      "fa-triangle-exclamation"
+    );
   }
-
-  showStatus("يرجى تحديد القسم والفصل والمادة لعرض المناهج.");
 }
 
-departmentSelect.addEventListener("change", () => {
-  semesterSelect.value = "";
-  semesterSelect.disabled = !departmentSelect.value;
-  resetCourse();
-  clearMaterials();
 
-  if (departmentSelect.value) {
-    showStatus("يرجى اختيار الفصل الدراسي.");
-  } else {
-    showStatus("يرجى تحديد القسم والفصل والمادة لعرض المناهج.");
-  }
-});
+/* ربط القوائم */
 
-semesterSelect.addEventListener("change", updateCourses);
+departmentSelect.addEventListener("change", updateDepartment);
+
+semesterSelect.addEventListener("change", updateSemester);
+
 courseSelect.addEventListener("change", loadMaterials);
 
+
+/* تشغيل الصفحة */
+
 initializeMaterials();
+
 </script>
 
 </body>
