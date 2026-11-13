@@ -1084,6 +1084,9 @@ async function loadMyRequests() {
 
 /* التحقق من تسجيل الدخول */
 
+
+/* التحقق من تسجيل الدخول */
+
 async function initializeMaterials() {
   showStatus(
     "جاري التحقق من تسجيل الدخول...",
@@ -1098,17 +1101,17 @@ async function initializeMaterials() {
       return;
     }
 
-  
+    showStatus(
+      "يرجى تحديد القسم والمادة لعرض المناهج."
+    );
+
+    await loadMyRequests();
 
   } catch (error) {
     console.error(error);
-showStatus(
-  "يرجى تحديد القسم والمادة لعرض المناهج."
-);
 
-await loadMyRequests();
-    
-اتصال. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
+    showStatus(
+      "تعذر الاتصال. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
       "fa-triangle-exclamation"
     );
   }
